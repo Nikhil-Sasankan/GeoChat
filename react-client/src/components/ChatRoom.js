@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { over } from 'stompjs';
 import SockJS from 'sockjs-client';
 import "./ChatRoom.css"
+import LoopIcon from '@mui/icons-material/Loop';
 
 var stompClient = null;
 const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
@@ -121,8 +122,8 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         "Charisma",
         "Fantasy",
         "Marvel",
-      ];
-      
+    ];
+
     // Random Name Generator Function
     const generateRandomName = () => {
         const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
@@ -337,18 +338,21 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                 :
 
                 <div className="register">
-                    <input
-                        id="user-name"
-                        placeholder="Enter your name"
-                        name="userName"
-                        value={userData.username}
-                        onChange={handleUsername}
-                        onKeyPress={handleKeyPressRegisterUser}
-                        margin="normal"
-                    />
-                    <button className="button-random" onClick={generateRandomUsername}>
-                        Random
-                    </button>
+                    <div>
+                        <input
+                            id="user-name"
+                            placeholder="Enter your name"
+                            name="userName"
+                            value={userData.username}
+                            onChange={handleUsername}
+                            onKeyPress={handleKeyPressRegisterUser}
+                            margin="normal"
+                            className='input-username'
+                        />
+                        <button className="button-random" onClick={generateRandomUsername}>
+                            <LoopIcon/>
+                        </button>
+                    </div>
                     <button className="button-register" onClick={registerUser}>
                         Enter Chat room
                     </button>

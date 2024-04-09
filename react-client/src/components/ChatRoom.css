@@ -10,6 +10,28 @@ body {
     /* Light gray background */
 }
 
+.input-username{
+    background-color: transparent;
+    color: #c9e0f3;
+    /* Text color */
+    border: 2px solid #ffffff;
+    /* White border */
+    padding: 10px 20px;
+    align-self: center;
+    margin: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.input-username:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* Semi-transparent white */
+    color: #ffffff;
+    /* Text color on hover */
+}
+
 .chat-title {
     font-family: 'Poppins', sans-serif;
     font-weight: 300;
@@ -32,6 +54,7 @@ body {
     align-items: center;
     color: azure;
     display: flex;
+    flex-direction: column;
     position: static;
     height: 100vh;
     /* Fill the viewport height */
@@ -50,6 +73,13 @@ body {
     transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
+.button-random:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* Semi-transparent white */
+    color: #ffffff;
+    /* Text color on hover */
+}
+
 .button-register:hover {
     background-color: rgba(255, 255, 255, 0.2);
     /* Semi-transparent white */
@@ -58,14 +88,13 @@ body {
 }
 
 .button-random {
-    background-color: transparent;
-    color: #25c206;
+    background-color: rgba(255, 255, 255, 0.7);;
+    color: #041101;
     /* Text color */
-    border: 2px solid #ffffff;
+    border: 3px solid #ffffff;
     /* White border */
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
+    padding: 5px 7px;
+    margin: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
