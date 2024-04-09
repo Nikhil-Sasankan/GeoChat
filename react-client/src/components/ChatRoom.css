@@ -57,6 +57,28 @@ body {
     /* Text color on hover */
 }
 
+.button-random {
+    background-color: transparent;
+    color: #25c206;
+    /* Text color */
+    border: 2px solid #ffffff;
+    /* White border */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.button-random:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* Semi-transparent white */
+    color: #ffffff;
+    /* Text color on hover */
+}
+
+
+
 .container {
     display: flex;
     flex-direction: column;
