@@ -1,0 +1,190 @@
+/* ChatRoom.css */
+
+/* Apply styles to the whole page */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    /* Use Roboto font or any other preferred font */
+    background-color: #f0f0f0;
+    /* Light gray background */
+}
+
+.chat-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    /* Regular */
+    font-size: 30px;
+    color: #000000;
+    /* Text color */
+    backdrop-filter: blur(5 px);
+    /* Blur effect for background */
+    padding: 1px;
+    /* Add padding to prevent text from touching edges */
+}
+
+.register {
+    background-image: url('https://images.squarespace-cdn.com/content/v1/6131aab0e93278616cc6f6b8/1630812785434-3TCPK3QM374NBTP3VI11/25552.jpg?format=1000w');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+    color: azure;
+    display: flex;
+    position: static;
+    height: 100vh;
+    /* Fill the viewport height */
+}
+
+.button-register {
+    background-color: transparent;
+    color: #ffffff;
+    /* Text color */
+    border: 2px solid #ffffff;
+    /* White border */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.button-register:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* Semi-transparent white */
+    color: #ffffff;
+    /* Text color on hover */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    /* Use full viewport height */
+}
+
+.chat-box {
+    flex-grow: 3;
+    /* Grow to fill available space */
+    margin: 10px;
+    touch-action: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.member-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.member-list li {
+    cursor: pointer;
+    padding: 10px;
+    margin-bottom: 1px;
+    margin-left: 3px;
+    border-radius: 5px;
+    background-color: #194779;
+    color: #fff;
+    font-weight: bold;
+}
+
+.member-list li.active {
+    background-color: #0056b3;
+    /* Darker shade for active tab */
+}
+
+.chat-content {
+    flex-grow: 1;
+    /* Grow to fill available space */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 1px;
+    margin-right: 1px;
+    padding: 10px;
+    /* Add padding for inner content */
+    overflow-y: auto;
+    /* Enable vertical scroll if needed */
+}
+
+.chat-messages {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    min-height: 60vh;
+}
+
+.message {
+    padding: 1px;
+    margin: 3px;
+    border-radius: 1px;
+    background-color: rgb(220, 233, 231);
+    /* Light background for messages */
+}
+
+.avatar {
+    display: inline-block;
+    width: auto;
+    /* Let the width be flexible based on content */
+    min-width: 30px;
+    /* Minimum width to avoid shrinking too much */
+    height: 20px;
+    background-color: rgb(212, 8, 8);
+    color: #fff;
+    border-radius: 5%;
+    text-align: center;
+    line-height: 20px;
+    margin-right: 5px;
+}
+
+.avatar.self {
+    display: inline-block;
+    width: auto;
+    /* Let the width be flexible based on content */
+    min-width: 30px;
+    /* Minimum width to avoid shrinking too much */
+    height: 20px;
+    background-color: rgb(2, 87, 30);
+    color: #fff;
+    border-radius: 5%;
+    text-align: center;
+    line-height: 20px;
+    margin-right: 5px;
+}
+
+.send-message {
+    display: flex;
+    align-items: center;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    /* Add margin for separation */
+}
+
+.input-message {
+    flex-grow: 1;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+
+
+.send-button {
+    padding: 5px 8px;
+    background-color: #073608;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    font-size: 13px;
+}
+
+.send-button:hover {
+    background-color: #457c48;
+}

@@ -1,0 +1,106 @@
+/* Results.css */
+.results-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-image: url('https://images.squarespace-cdn.com/content/v1/6131aab0e93278616cc6f6b8/1630812785434-3TCPK3QM374NBTP3VI11/25552.jpg?format=1000w');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    /* Ensure full height */
+    padding: 10px 0;
+    /* Adjust padding as needed */
+}
+
+.map-container {
+    margin-bottom: 5px;
+}
+
+/* Styles for mobile devices (up to 768px) */
+@media (max-width: 768px) {
+    .map-container {
+        height: 550px;
+        /* Adjust height for mobile */
+        width: 90%;
+        /* Full width for mobile */
+    }
+    .button-create {
+        margin-right: 30%;
+    }
+}
+
+/* Styles for desktop devices (769px and above) */
+@media (min-width: 769px) {
+    .map-container {
+        height: 480px;
+        /* Adjust height for desktop */
+        width: 90%;
+        /* Adjust width for desktop */
+    }
+    .button-create {
+        margin-right: 100px;
+    }
+}
+
+
+.result-heading {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    /* Regular */
+    font-size: 20px;
+    color: #fff;
+    /* Text color */
+    backdrop-filter: blur(5px);
+    /* Blur effect for background */
+    padding: 10px;
+    /* Add padding to prevent text from touching edges */
+}
+
+
+
+.button-findchatrooms {
+    margin-top: 20px;
+    margin-right: 20px;
+    background-color: transparent;
+    align-self: flex-start;
+    color: #ffffff;
+    /* Text color */
+    border: 2px solid #ffffff;
+    /* White border */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+.button-create {
+    margin-top: 20px;
+    margin-right: 20px;
+    background-color: transparent;
+    align-self: flex-end;
+    color: #ffffff;
+    /* Text color */
+    border: 2px solid #ffffff;
+    /* White border */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.button-findchatrooms:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* Semi-transparent white */
+    color: #ffffff;
+    /* Text color on hover */
+}
+.button-create:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* Semi-transparent white */
+    color: #ffffff;
+    /* Text color on hover */
+}
+.actionitems{
+    display: inline-block;
+}

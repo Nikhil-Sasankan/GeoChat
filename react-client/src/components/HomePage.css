@@ -1,0 +1,76 @@
+.home-page {
+    background-image: url('https://images.squarespace-cdn.com/content/v1/6131aab0e93278616cc6f6b8/1630812785434-3TCPK3QM374NBTP3VI11/25552.jpg?format=1000w');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: azure;
+}
+
+.geo-title{
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300; /* Regular */
+    font-size: 60px;
+    color: #fff; /* Text color */
+    backdrop-filter: blur(5
+    px); /* Blur effect for background */
+    padding: 20px; /* Add padding to prevent text from touching edges */
+}
+
+.button-join {
+    background-color: transparent;
+    color: #ffffff; /* Text color */
+    border: 2px solid #ffffff; /* White border */
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.button-join:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+    color: #ffffff; /* Text color on hover */
+}
+
+
+/* HomePage.css */
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(10, 2, 58, 0.5); /* Semi-transparent background color */
+    padding: 10px 20px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Adds a shadow for depth */
+}
+
+.navbar-brand {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li {
+    display: inline;
+    margin-right: 40px;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: #dfdfdf; /* Default text color */ 
+    transition: color 0.5s ease; /* Smooth transition for color change */
+}
+
+.nav-links li a:hover {
+    color: rgb(31, 163, 97); /* Highlight color on hover */
+}
