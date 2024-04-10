@@ -1,25 +1,21 @@
 package com.geochat.chat.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.geochat.chat.dto.ChatRoomDTO;
 import com.geochat.chat.dto.ChatRoomPreferenceDTO;
 import com.geochat.chat.dto.GetRoomsDTO;
 import com.geochat.chat.dto.MessageDTO;
 import com.geochat.chat.dto.SessionDTO;
-import com.geochat.chat.model.Chatroom;
-import com.geochat.chat.model.Message;
+import com.geochat.chat.model.Chatroom; 
 import com.geochat.chat.model.User;
 import com.geochat.chat.repo.ChatroomRepo;
 import com.geochat.chat.repo.UserRepo;
-import com.mysql.cj.Session;
 
 @Component
 public class ChatAppService {
@@ -42,7 +38,25 @@ public class ChatAppService {
 		// Fetch the city code corresponding to the user geolocation
 		
 		// For the city fetched , we collect the list of chatrooms in the requred radius to show to the user
-		List<Chatroom> cityChatRooms = chatroomrepo.findAll();
+		List<Chatroom> cityChatRooms = chatroomrepo.findAll();	
+		
+		// Make a list of the chatrooms that are inactive since they they need to be deleted
+		 Date currentDatetime = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000)); // 1 day ago from current time
+	     LocalDate currdatetime = currentDatetime.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+	     LocalDate localDate1PlusOneDay = currdatetime.minusDays(1);
+
+	     // To store the id of the dates to be deleted
+	     List<String> croomIDS = new ArrayList<>();
+	     for (Chatroom chatroom : cityChatRooms) {
+			LocalDate lastactive = chatroom.getLasttimeactive().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+			if(chatroom.getActiveusers()<=0 && lastactive.isBefore(localDate1PlusOneDay)) {
+				// adding to the list to delet 
+				croomIDS.add(chatroom.getChatroomjoinid());
+				//removing from the process list
+				cityChatRooms.remove(chatroom);
+			}
+	     }
+	     chatroomrepo.deleteAllByjoinid(croomIDS);
 		
 		System.out.println("Chatrooms in city : "+ cityChatRooms.size());
 		// Fetched the chatrooms in radius
@@ -82,13 +96,11 @@ public class ChatAppService {
 				res.add(croom);
 			}
 		}
-		
 		return res ;
 	}
 	
 	// Service to generate the data and other for creating the user session
 	public SessionDTO setuserSession(ChatRoomPreferenceDTO chatroompreference) {
-		// gets the UI sent data 
 		ChatRoomDTO preferredchatroom = chatroompreference.getChatroomdetails();
 		int prefChatroomid = preferredchatroom.getChatroomid();
 		 
@@ -109,7 +121,9 @@ public class ChatAppService {
 		System.out.println("Chat room user incremented");
 		
 		SessionDTO createdsessiondata = new SessionDTO();
-		createdsessiondata.setSessionKey("");
+		UUID uuid = UUID.randomUUID();
+        String uniqueId = uuid.toString();
+		createdsessiondata.setSessionKey(uniqueId);
 		
 		// Return back the saved deatils to the UI
 		createdsessiondata.setUserdata(saveduser);
@@ -117,8 +131,15 @@ public class ChatAppService {
 		return createdsessiondata ;
 	}
 
-	public void usermessageValidation(Message message) throws Exception {
-		
+	public void usermessageValidation(MessageDTO message) throws Exception {
+		String chatroomid = message.getChatroomid();
+		String username = message.getSenderName();
+		// Verify if the user has created a session for the chatroom he is sending message to 
+		System.out.println("User : "+username+"-----> Roomid : "+chatroomid);
+		List<User> users =  userrepo.ifUserValidforChatRoom(chatroomid,username);
+		if(users.isEmpty()) { 
+			throw new Exception("The users is of invalid session");
+		}
 	}
 
 	// API to create a chatroom for user 
@@ -129,10 +150,26 @@ public class ChatAppService {
 		
 		UUID uuid = UUID.randomUUID();
         String uniqueId = uuid.toString();
-		chatroom.setChatroomjoinid(uniqueId.substring(0, Math.min(uniqueId.length(), 8)));
+		chatroom.setChatroomjoinid(uniqueId);
 		
 		Chatroom createdChatroom = chatroomrepo.save(chatroom);
 		System.out.println("Saved successfully");
 		return createdChatroom;
+	}
+
+	public String deletechatrooms(Chatroom chatroom) throws Exception {
+		String deteroomid = chatroom.getChatroomjoinid();
+		Chatroom crm = chatroomrepo.findbyjoin(deteroomid);
+		System.out.println("USer key : "+chatroom.getSecretKey());
+		System.out.println("Origianl : "+crm.getSecretKey());
+		
+		if(!crm.getSecretKey().equals(chatroom.getSecretKey())) {
+			System.out.println("Invalid key");
+			throw new Exception("Invalid secret key");
+		}
+		List<String> deletionrooomids = new ArrayList<>();
+		deletionrooomids.add(deteroomid);
+		chatroomrepo.deleteAllByjoinid(deletionrooomids);
+		return "Deletion successfull";
 	}
 }

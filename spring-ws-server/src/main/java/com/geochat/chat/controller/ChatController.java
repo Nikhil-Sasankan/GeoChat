@@ -15,9 +15,7 @@ import com.geochat.chat.dto.ChatRoomPreferenceDTO;
 import com.geochat.chat.dto.GetRoomsDTO;
 import com.geochat.chat.dto.MessageDTO;
 import com.geochat.chat.dto.SessionDTO;
-import com.geochat.chat.model.Chatroom;
-import com.geochat.chat.model.Message;
-import com.geochat.chat.model.User;
+import com.geochat.chat.model.Chatroom; 
 import com.geochat.chat.service.ChatAppService;
 
 @RestController
@@ -28,7 +26,6 @@ public class ChatController {
     
     @Autowired
     ChatAppService service;
-
     
 	/***
 	 * UI --> sends the object containing required userdetails , as of now simply location services required
@@ -61,15 +58,24 @@ public class ChatController {
     
     
     /***
-     * Once the user sets a prefereend chatroom , the chatroom details and the user details are sent back
-     * then the API creates the user profile in the DB with this and provides the session key for further
-     * @return 
+     * To create a chatroom of preference 
      * 
      */
     @PostMapping(value = "/createchatroom")
     public Chatroom createChatRooms(@RequestBody Chatroom chatroom) {
     	System.out.println("Create Chatroom API called");
     	return service.createchatroom(chatroom);
+    }
+    /***
+     * To delete a chatroom of preference 
+     * @throws Exception 
+     * 
+     */
+    @PostMapping(value = "/deletechatroom")
+    public String deleteChatRooms(@RequestBody Chatroom chatroom) throws Exception {
+    	System.out.println("delete Chatroom API called");
+    	System.out.println(chatroom.toString());
+    	return service.deletechatrooms(chatroom);
     }
     
     
@@ -83,17 +89,11 @@ public class ChatController {
     @MessageMapping("/message")
     public MessageDTO receiveMessage(@Payload MessageDTO message) throws Exception{
     	String chatroomName = message.getChatroomid();
-    	// to this API , simple message is transferred as object , will need validate the user
-    	// and other process  finall then decide that his message will go to which chatroom 
-    	Message usermessage = new Message();
-    	usermessage.setChatroomid(chatroomName);
-    	usermessage.setMessagecontent(message.getMessage());
-    	usermessage.setUserid(message.getSenderName());
-    	service.usermessageValidation(usermessage);
-    	
-    	// fetches the Message that is added , checks the user who sent it , 
-    	// if the user is in active session and if the user is allowed to send in the chatroom mentioned in the message 
-    
+    	try {
+    		service.usermessageValidation(message);
+    	}catch (Exception e) {
+			return null;
+		}
     	// saving of the message is also done 	
     	simpMessagingTemplate.convertAndSend("/chatroom/public/"+chatroomName, message);
         return message;

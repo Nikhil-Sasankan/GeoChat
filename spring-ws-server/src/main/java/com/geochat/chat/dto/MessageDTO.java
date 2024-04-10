@@ -1,9 +1,6 @@
 package com.geochat.chat.dto;
 
 import lombok.*;
-
-import java.util.Date;
-
 import com.geochat.chat.model.Status;
 
 @NoArgsConstructor

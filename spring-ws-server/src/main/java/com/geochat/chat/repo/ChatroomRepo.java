@@ -1,7 +1,6 @@
 package com.geochat.chat.repo;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.List; 
 
 import javax.transaction.Transactional;
 
@@ -27,5 +26,13 @@ public interface ChatroomRepo extends JpaRepository<Chatroom, Integer> {
 
 	@Query(value="select * from chatroom cr where chatroomid = :cid",nativeQuery = true)
 	Chatroom findBychatroomId(@Param("cid")int chatroomid);
+
+	@Transactional
+	@Modifying
+	@Query(value="DELETE from chatroom cr WHERE cr.chatroomjoinid in :joinids ",nativeQuery = true)
+	void deleteAllByjoinid(@Param("joinids")List<String> croomIDS);
+
+	@Query(value="select * from chatroom cr where cr.chatroomjoinid = :cid",nativeQuery = true)
+	Chatroom findbyjoin(@Param("cid")String deteroomid);
 
 }

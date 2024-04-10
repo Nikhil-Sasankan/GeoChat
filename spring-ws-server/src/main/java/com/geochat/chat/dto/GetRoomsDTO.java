@@ -7,5 +7,4 @@ import lombok.Data;
 public class GetRoomsDTO {
 	User user;
 	String roomkey;
-
 }

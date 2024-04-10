@@ -58,6 +58,34 @@ const App = () => {
     }
 }
 
+// API to create the chatrooms
+const deleteChatRoomAPIMethod = async (createchatroomname ,usersecretKey,userchatroomjoinid) => {
+  console.log("Executing the create API")
+  try { 
+      // Fetching the available chatrooms using the user location
+      const response = await fetch(ipaddress+'/deletechatroom', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+              chatroomname : createchatroomname,
+              secretKey : usersecretKey, 
+              chatroomjoinid : userchatroomjoinid
+          })
+      })
+
+      const data = await response.json();
+      console.log("Room successfully deleted ",data)
+      return data ;
+
+  } catch (error) {
+      console.log(error)
+  }
+}
+
+
   const getAvailableChatRooms = async (userlatitude, userlongitude,chatroomjoinid) => {
     try {
       // Fetching the available chatrooms using the user location
@@ -124,6 +152,7 @@ const App = () => {
           setchatsessionroom = {setchatsessionroom}
           handleCreateAPI = {handleCreateAPI}
           handleFindPrivateChats={handleFindPrivateChats}
+          deleteChatRoomAPIMethod={deleteChatRoomAPIMethod}
         />}
       {currentPage === "CHATROOM_JOINED" &&
         <ChatRoom chatsessionroom={chatsessionroom} usergeolocation={usergeolocation}/>}

@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css'
 import { useState, useRef } from "react";
 import L from 'leaflet';
 
-const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatsessionroom, handleCreateAPI,handleFindPrivateChats }) => {
+const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatsessionroom, handleCreateAPI, handleFindPrivateChats,deleteChatRoomAPIMethod }) => {
     const [createChatRoomObj, setcreateChatRoomObj] = useState({
         name: '',
         lat: 0,
@@ -25,9 +25,6 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
     const setChatroomJoined = (selectedchatroom) => {
         setCurrentPage("CHATROOM_JOINED")
         setchatsessionroom(selectedchatroom)
-
-        sessionStorage.setItem('userId', (new Date));
-        console.log(sessionStorage.getItem('userId'))
     }
     const handleMapClick = (e) => {
         const map = e.target; // Get the map object from the event
@@ -45,7 +42,7 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
         isPrivateRef.current.checked == true ? setisprivate("YES") : setisprivate("YES") // Update isPrivate based on checkbox status
     };
 
-    const  handlefindchatroomid = (e)=>{
+    const handlefindchatroomid = (e) => {
         findChatroomid.current = e.target.value
     }
 
@@ -67,8 +64,14 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
 
         handleCreateAPI(chatroomname, createChatRoomObj.lat, createChatRoomObj.lng, secretKey, isprivate)
         setcreateChatRoomObj(null)
+        handlesecretKeyChange(null)
     }
 
+    const setChatroomdelete = (rooms) =>{ 
+        deleteChatRoomAPIMethod(rooms.chatroomname,secretKeyRef.current,rooms.chatroomjoinid)
+        secretKeyRef=null
+    }
+ 
     const ClickHandler = () => {
         useMapEvents({
             click: handleMapClick,
@@ -76,8 +79,8 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
         return null;
     };
 
-    const handleFindChatroms = () =>{
-        console.log("The find chatroom id is : "+ findChatroomid.current)
+    const handleFindChatroms = () => {
+        console.log("The find chatroom id is : " + findChatroomid.current)
         handleFindPrivateChats(findChatroomid.current)
     }
 
@@ -86,7 +89,7 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
         iconSize: [32, 32], // Size of the icon
         iconAnchor: [16, 32], // Anchor point of the icon
     });
- 
+
     // Define marker icons for private and non-private chatrooms
     const privateRoomIcon = L.icon({
         iconUrl: process.env.PUBLIC_URL + 'marker-shadow-private.png',
@@ -102,6 +105,8 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
 
 
     const MapComponent = ({ points }) => {
+        console.log(points)
+        const [isdelete, setisdelete] = useState(false)
         return (
             <MapContainer className="map-container" ref={mapRef} center={mapPosition} zoom={zoomLevel} onClick={handleMapClick}>
                 {isCreatingRoom && <ClickHandler />}
@@ -138,19 +143,33 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                 {points.map((pnts, index) => {
                     console.log(pnts)
                     return (
-                        <Marker key={index} position={[pnts.latitude, pnts.longitude]} icon={pnts.isprivate=="YES" ? privateRoomIcon : publicRoomIcon}  >
+                        <Marker key={index} position={[pnts.latitude, pnts.longitude]} icon={pnts.isprivate == "YES" ? privateRoomIcon : publicRoomIcon}  >
 
-                            <Popup>
-                                <div>
-                                    ChatRoom : {pnts.chatroomname}
-                                </div>
-                                <div>
-                                    ID : #{pnts.chatroomjoinid}
-                                </div>
-                                <button id="join-chatroom" onClick={() => { setChatroomJoined(pnts) }}>Join Chatroom</button>
-                                <div>
-                                    Active users: {pnts.activeusers}
-                                </div>
+                            <Popup>{
+                                isdelete ?
+                                    <div>
+                                        <input
+                                            type="text"
+                                            onChange={handlesecretKeyChange}
+                                            placeholder="Enter secret key"
+                                        />
+                                        <button id="delete-chatroombtn" onClick={() => {setChatroomdelete(pnts)}}>Delete Chatroom</button>
+                                    </div> :
+                                    <div>
+                                        <div>
+                                            ChatRoom : {pnts.chatroomname}
+                                        </div>
+                                        <div>
+                                            ID : #{pnts.chatroomjoinid}
+                                        </div>
+                                        <button id="join-chatroom" onClick={() => { setChatroomJoined(pnts) }}>Join Chatroom</button>
+                                        <button id="delete-chatroom" onClick={() => setisdelete(true)}>Delete Chatroom</button>
+
+                                        <div>
+                                            Active users: {pnts.activeusers}
+                                        </div>
+                                    </div>
+                            }
                             </Popup>
                         </Marker>
                     )
@@ -174,12 +193,12 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
             <div className="actionitems" >
                 {isModalOpen ?
                     <div>
-                    <input className="button-findchatrooms" onChange={handlefindchatroomid} ></input>
-                    <button className="button-findchatrooms" onClick={handleFindChatroms}>Find</button>
-                    <button className="button-findchatrooms" onClick={()=>setIsModalOpen(false)}>Cancel</button>
+                        <input className="button-findchatrooms" onChange={handlefindchatroomid} ></input>
+                        <button className="button-findchatrooms" onClick={handleFindChatroms}>Find</button>
+                        <button className="button-findchatrooms" onClick={() => setIsModalOpen(false)}>Cancel</button>
                     </div>
                     :
-                    <button className="button-findchatrooms" onClick={()=>setIsModalOpen(true)} >
+                    <button className="button-findchatrooms" onClick={() => setIsModalOpen(true)} >
                         Find Private Chatrooms
                     </button>
                 }
