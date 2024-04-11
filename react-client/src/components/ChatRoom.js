@@ -17,15 +17,17 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
     const [privateChats, setPrivateChats] = useState(new Map());
     const [publicChats, setPublicChats] = useState([]);
+    const [enterisDisabled, setenterIsDisabled] = useState([])
     const [tab, setTab] = useState("CHATROOM");
-    const chatContentRef = useRef(null); // Ref for chat-content 
+    const chatContentRef = useRef(null); // Ref for chat-content
+    const [errorDialogOpen, setErrorDialogOpen] = useState(false);
     const [userData, setUserData] = useState({
         userId: '',
         username: '',
         receivername: '',
         connected: false,
         message: '',
-        selectedProfile:profileiconames[2] 
+        selectedProfile: profileiconames[2]
     });
     useEffect(() => {
         console.log(userData);
@@ -38,7 +40,11 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
     };
 
     const generateRandomUsername = () => {
-        const randomName = generateRandomName();
+        let randomName = generateRandomName();
+        while (chatsessionroom.userspresent.includes(randomName)) {
+            console.log("Name already exists , finding a new name")
+            randomName = generateRandomName();
+        }
         setUserData({ ...userData, "username": randomName });
     }
 
@@ -153,9 +159,22 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
     const handleUsername = (event) => {
         const { value } = event.target;
-        console.log("Users present - >",chatsessionroom.userspresent);
+        console.log("Users present - >", chatsessionroom.userspresent);
+        console.log(value)
         setUserData({ ...userData, "username": value });
+
+        if (chatsessionroom.userspresent.includes(value)) {
+            setenterIsDisabled(true)
+            setErrorDialogOpen("ALREADY_EXISTS"); // Show the error dialog
+        }else if(value == null || value === ""){
+            setenterIsDisabled(true)
+            setErrorDialogOpen("INVALID_USERNAME"); // Show the error dialog
+        } else {
+            setenterIsDisabled(false)
+            setErrorDialogOpen("VALID"); // Show the error dialog
+        }
     }
+
 
     const registerUser = () => {
         connect();
@@ -168,12 +187,13 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
     }
 
     const handleKeyPressSendMessage = (event) => {
-        if (!(userData.message==null || userData.message==="")&&event.key === 'Enter') {
+        if (!(userData.message == null || userData.message === "") && event.key === 'Enter') {
             sendValue();
         }
     }
 
     return (
+
         <div className="container">
             {userData.connected ?
                 <div className="chat-box">
@@ -209,7 +229,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
                         <div className="send-message">
                             <input type="text" className="input-message" placeholder="enter the message" value={userData.message} onKeyPress={handleKeyPressSendMessage} onChange={handleMessage} />
-                            <button type="button" className="send-button" disabled={userData.message==null || userData.message==="" } onClick={sendValue}>Send</button>
+                            <button type="button" className="send-button" disabled={userData.message == null || userData.message === ""} onClick={sendValue}>Send</button>
                         </div>
                     </div>}
                     {/* {tab !== "CHATROOM" && <div className="chat-content">
@@ -249,6 +269,10 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                         ))}
                     </Carousel>
                     <div>
+                        {enterisDisabled === true &&  errorDialogOpen==="INVALID_USERNAME" && <div className='error-message'> ❌Enter a valid username.</div> }
+                        {enterisDisabled === true &&  errorDialogOpen==="ALREADY_EXISTS"   && <div className='error-message'> ❌Username already exists.</div>}
+                        {enterisDisabled === false && <div className='noerror-message'>✅ Username Available</div> }
+                        
                         <input
                             id="user-name"
                             placeholder="Enter your name"
@@ -263,7 +287,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                             <LoopIcon />
                         </button>
                     </div>
-                    <button className={`button-register ${userData.username==null || userData.username==="" ? 'disabled' : ''}`} disabled={userData.username==null || userData.username===""} onClick={registerUser}>
+                    <button className={`button-register ${enterisDisabled ? 'disabled' : ''}`} disabled={enterisDisabled} onClick={registerUser}>
                         Enter Chat Room
                     </button>
 

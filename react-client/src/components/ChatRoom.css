@@ -299,3 +299,17 @@ body {
     text-align: right; 
 }
 
+.error-message{
+    color: rgb(247, 67, 67);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    font-size: 13px;
+    margin-left: 9px;
+}
+.noerror-message{
+    color: rgb(67, 247, 163);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    font-size: 13px;
+    margin-left: 9px;
+}
