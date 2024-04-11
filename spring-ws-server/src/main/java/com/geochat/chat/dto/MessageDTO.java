@@ -15,4 +15,5 @@ public class MessageDTO {
     private String date;
     private Status status;
     private String chatroomid;
+    private String selectedProfile;
 }

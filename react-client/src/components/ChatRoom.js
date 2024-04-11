@@ -1,15 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { over } from 'stompjs';
 import SockJS from 'sockjs-client';
+import { generateRandomName } from './Utility';
+import { ipaddress, createUserSession } from './APIService';
 import "./ChatRoom.css"
 import LoopIcon from '@mui/icons-material/Loop';
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import carousel styles
+import { Carousel } from 'react-responsive-carousel';
 
 var stompClient = null;
+
 const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
+    const profileiconames = [
+        "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg"
+    ]
+
     const [privateChats, setPrivateChats] = useState(new Map());
     const [publicChats, setPublicChats] = useState([]);
     const [tab, setTab] = useState("CHATROOM");
-    const ipaddress = 'http://localhost:8080'
+    const chatContentRef = useRef(null); // Ref for chat-content 
     const [userData, setUserData] = useState({
         userId: '',
         username: '',
@@ -21,114 +30,10 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         console.log(userData);
     }, [userData]);
 
-    // Predefined arrays of adjectives and nouns for the random name generator
-    const adjectives = [
-        "Mighty",
-        "Squishy",
-        "Flamboyant",
-        "Sporky",
-        "Zesty",
-        "Fuzzy",
-        "Wacky",
-        "Jolly",
-        "Sparkling",
-        "Giggly",
-        "Peculiar",
-        "Whimsical",
-        "Silly",
-        "Bubbly",
-        "Quirky",
-        "Lively",
-        "Dazzling",
-        "Cheeky",
-        "Glittery",
-        "Radiant",
-        "Charming",
-        "Playful",
-        "Cozy",
-        "Dapper",
-        "Fancy",
-        "Sassy",
-        "Snazzy",
-        "Witty",
-        "Enchanting",
-        "Dynamic",
-        "Vibrant",
-        "Clever",
-        "Happy-go-lucky",
-        "Funky",
-        "Jovial",
-        "Gleeful",
-        "Sunny",
-        "Bouncy",
-        "Energetic",
-        "Punny",
-        "Dreamy",
-        "Luminous",
-        "Vivacious",
-        "Zippy",
-        "Merry",
-        "Sprightly",
-    ];
 
-    const nouns = [
-        "Pickle",
-        "Squirrel",
-        "Unicorn",
-        "Pancake",
-        "Noodle",
-        "Cupcake",
-        "Rainbow",
-        "Marshmallow",
-        "Jellybean",
-        "Bubble",
-        "Cookie",
-        "Snickerdoodle",
-        "Doodle",
-        "Muffin",
-        "Pudding",
-        "Gummy Bear",
-        "Cinnamon Roll",
-        "Sugarplum",
-        "Sparkle",
-        "Twinkle",
-        "Starlight",
-        "Dreamer",
-        "Whisper",
-        "Moonbeam",
-        "Petal",
-        "Sunshine",
-        "Blossom",
-        "Dazzle",
-        "Harmony",
-        "Melody",
-        "Breeze",
-        "Wonder",
-        "Magic",
-        "Fairy",
-        "Sprite",
-        "Pegasus",
-        "Lullaby",
-        "Serenade",
-        "Comet",
-        "Nova",
-        "Galaxy",
-        "Aurora",
-        "Enchantment",
-        "Bliss",
-        "Jubilee",
-        "Miracle",
-        "Serendipity",
-        "Charisma",
-        "Fantasy",
-        "Marvel",
-    ];
-
-    // Random Name Generator Function
-    const generateRandomName = () => {
-        const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
-        const noun = nouns[Math.floor(Math.random() * nouns.length)];
-        return `${adjective} ${noun}`;
+    const handleProfileSelect = (profile) => {
+        console.log("profileid", profileiconames[profile])
+        setUserData({ ...userData, selectedProfile: profileiconames[profile] });
     };
 
     const generateRandomUsername = () => {
@@ -136,40 +41,18 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         setUserData({ ...userData, "username": randomName });
     }
 
-    const createUserSession = async () => {
-        try {
-            // Creating the session for the user once all the details are there 
-            const response = await fetch('http://192.168.0.105:8080/createusersession', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    "userdetails": {
-                        "latitude": usergeolocation.userlatitude,
-                        "longitude": usergeolocation.userlongitude,
-                        "username": userData.username
-                    },
-                    "chatroomdetails": {
-                        "chatroomid": chatsessionroom.chatroomid,
-                        "chatroomname": chatsessionroom.chatroomname,
-                        "latitude": chatsessionroom.latitude,
-                        "longitude": chatsessionroom.longitude
-                    }
-                })
-            })
-
-            const data = await response.json();
-            console.log("User Data Saved Successfully --- >", data)
-        } catch (error) {
-            console.log(error)
+    const scrollToBottom = () => {
+        if (chatContentRef.current) {
+            chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
         }
-    }
+    };
+    useEffect(() => {
+        scrollToBottom();
+    }, [publicChats, privateChats]); // Add any other dependencies as needed
 
     const connect = () => {
         // using the POST to create a session
-        createUserSession();
+        createUserSession({ usergeolocation, userData, chatsessionroom });
 
         let Sock = new SockJS(ipaddress + '/ws');
         stompClient = over(Sock);
@@ -211,7 +94,6 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
     }
 
     const onPrivateMessage = (payload) => {
-        console.log(payload);
         var payloadData = JSON.parse(payload.body);
         if (privateChats.get(payloadData.senderName)) {
             privateChats.get(payloadData.senderName).push(payloadData);
@@ -226,7 +108,6 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
     const onError = (err) => {
         console.log(err);
-
     }
 
     const handleMessage = (event) => {
@@ -241,7 +122,8 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                 message: userData.message,
                 status: "MESSAGE",
                 messagetype: "text",
-                chatroomid: chatsessionroom.chatroomid
+                chatroomid: chatsessionroom.chatroomid,
+                selectedProfile: userData.selectedProfile
             };
             console.log(chatMessage);
             stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
@@ -249,24 +131,24 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         }
     }
 
-    const sendPrivateValue = () => {
-        if (stompClient) {
-            var chatMessage = {
-                senderName: userData.username,
-                receiverName: tab,
-                chatroomid: chatsessionroom.chatroomid,
-                message: userData.message,
-                status: "MESSAGE"
-            };
+    // const sendPrivateValue = () => {
+    //     if (stompClient) {
+    //         var chatMessage = {
+    //             senderName: userData.username,
+    //             receiverName: tab,
+    //             chatroomid: chatsessionroom.chatroomid,
+    //             message: userData.message,
+    //             status: "MESSAGE"
+    //         };
 
-            if (userData.username !== tab) {
-                privateChats.get(tab).push(chatMessage);
-                setPrivateChats(new Map(privateChats));
-            }
-            stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
-            setUserData({ ...userData, "message": "" });
-        }
-    }
+    //         if (userData.username !== tab) {
+    //             privateChats.get(tab).push(chatMessage);
+    //             setPrivateChats(new Map(privateChats));
+    //         }
+    //         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+    //         setUserData({ ...userData, "message": "" });
+    //     }
+    // }
 
     const handleUsername = (event) => {
         const { value } = event.target;
@@ -303,12 +185,22 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                         </ul>
                     </div>
                     {tab === "CHATROOM" && <div className="chat-content">
-                        <ul className="chat-messages">
+                        <ul className="chat-messages" ref={chatContentRef}>
                             {publicChats.map((chat, index) => (
                                 <li className={`message ${chat.senderName === userData.username && "self"}`} key={index}>
-                                    {chat.senderName !== userData.username && <div className="avatar">{chat.senderName}</div>}
+                                    {chat.senderName !== userData.username && <>
+                                        <img className='avatar-image' src={process.env.PUBLIC_URL + "/profileicons/" + chat.selectedProfile} alt={"AvatarProf"} />
+                                        <div className="avatar">
+                                            {chat.senderName}
+                                        </div></>}
                                     <div className="message-data">{chat.message}</div>
-                                    {chat.senderName === userData.username && <div className="avatar self">{chat.senderName}</div>}
+                                    {chat.senderName === userData.username && <>
+                                        <div className="avatar self">
+                                            {chat.senderName}
+                                        </div>
+                                        <img className='avatar-image' src={process.env.PUBLIC_URL + "/profileicons/" + userData.selectedProfile} alt={"AvatarProf"} />
+                                    </>
+                                    }
                                 </li>
                             ))}
                         </ul>
@@ -318,7 +210,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                             <button type="button" className="send-button" onClick={sendValue}>Send</button>
                         </div>
                     </div>}
-                    {tab !== "CHATROOM" && <div className="chat-content">
+                    {/* {tab !== "CHATROOM" && <div className="chat-content">
                         <ul className="chat-messages">
                             {[...privateChats.get(tab)].map((chat, index) => (
                                 <li className={`message ${chat.senderName === userData.username && "self"}`} key={index}>
@@ -333,11 +225,26 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                             <input type="text" className="input-message" placeholder="enter the message" value={userData.message} onChange={handleMessage} />
                             <button type="button" className="send-button" onClick={sendPrivateValue}>Send</button>
                         </div>
-                    </div>}
+                    </div>} */}
                 </div>
                 :
 
                 <div className="register">
+                    <Carousel
+                        className='profile-carousels'
+                        showThumbs={false}
+                        showArrows={true}
+                        centerMode={true} // Center the images
+                        centerSlidePercentage={100} // Centered slide takes full width
+                        selectedItem={0} // Selected item index
+                        onChange={(element) => handleProfileSelect(element)}
+                    >
+                        {profileiconames.map((element, index) => (
+                            <div key={index} className='profile-image-container'>
+                                <img className='profile-image' src={process.env.PUBLIC_URL + "/profileicons/" + element} alt={"Profile" + element} />
+                            </div>
+                        ))}
+                    </Carousel>
                     <div>
                         <input
                             id="user-name"
@@ -350,7 +257,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                             className='input-username'
                         />
                         <button className="button-random" onClick={generateRandomUsername}>
-                            <LoopIcon/>
+                            <LoopIcon />
                         </button>
                     </div>
                     <button className="button-register" onClick={registerUser}>

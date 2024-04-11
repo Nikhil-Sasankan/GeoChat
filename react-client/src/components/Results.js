@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css'
 import { useState, useRef } from "react";
 import L from 'leaflet';
 
-const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatsessionroom, handleCreateAPI, handleFindPrivateChats,deleteChatRoomAPIMethod }) => {
+const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatsessionroom, handleCreateAPI, handleFindPrivateChats,handleDeleteAPI }) => {
     const [createChatRoomObj, setcreateChatRoomObj] = useState({
         name: '',
         lat: 0,
@@ -39,7 +39,7 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
 
     // Function to handle checkbox change
     const handleIsPrivateChange = () => {
-        isPrivateRef.current.checked == true ? setisprivate("YES") : setisprivate("YES") // Update isPrivate based on checkbox status
+        isPrivateRef.current.checked === true ? setisprivate("YES") : setisprivate("YES") // Update isPrivate based on checkbox status
     };
 
     const handlefindchatroomid = (e) => {
@@ -64,12 +64,13 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
 
         handleCreateAPI(chatroomname, createChatRoomObj.lat, createChatRoomObj.lng, secretKey, isprivate)
         setcreateChatRoomObj(null)
-        handlesecretKeyChange(null)
+        SetIsCreatingRoom(false)
+        console.log(isCreatingRoom)
     }
 
     const setChatroomdelete = (rooms) =>{ 
-        deleteChatRoomAPIMethod(rooms.chatroomname,secretKeyRef.current,rooms.chatroomjoinid)
-        secretKeyRef=null
+        handleDeleteAPI(rooms.chatroomname,secretKeyRef.current,rooms.chatroomjoinid)
+        secretKeyRef.current=null
     }
  
     const ClickHandler = () => {
@@ -143,7 +144,7 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                 {points.map((pnts, index) => {
                     console.log(pnts)
                     return (
-                        <Marker key={index} position={[pnts.latitude, pnts.longitude]} icon={pnts.isprivate == "YES" ? privateRoomIcon : publicRoomIcon}  >
+                        <Marker key={index} position={[pnts.latitude, pnts.longitude]} icon={pnts.isprivate === "YES" ? privateRoomIcon : publicRoomIcon}  >
 
                             <Popup>{
                                 isdelete ?
@@ -153,7 +154,8 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                                             onChange={handlesecretKeyChange}
                                             placeholder="Enter secret key"
                                         />
-                                        <button id="delete-chatroombtn" onClick={() => {setChatroomdelete(pnts)}}>Delete Chatroom</button>
+                                        <button id="delete-chatroombtn" onClick={() => {setChatroomdelete(pnts);setisdelete(false)}}>Delete Chatroom</button>
+                                        <button id="delete-chatroombtn" onClick={() => {setisdelete(false)}}>Cancel</button>
                                     </div> :
                                     <div>
                                         <div>

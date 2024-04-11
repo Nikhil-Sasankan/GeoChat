@@ -135,11 +135,12 @@ public class ChatAppService {
 		String chatroomid = message.getChatroomid();
 		String username = message.getSenderName();
 		// Verify if the user has created a session for the chatroom he is sending message to 
-		System.out.println("User : "+username+"-----> Roomid : "+chatroomid);
+		System.out.println("User : "+username+"-----> Roomid : "+chatroomid + " ;-> "+message.getMessage());
 		List<User> users =  userrepo.ifUserValidforChatRoom(chatroomid,username);
 		if(users.isEmpty()) { 
 			throw new Exception("The users is of invalid session");
 		}
+		System.out.println("User is valid");
 	}
 
 	// API to create a chatroom for user 
