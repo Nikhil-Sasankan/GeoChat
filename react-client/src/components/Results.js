@@ -158,16 +158,16 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                                         <button id="delete-chatroombtn" onClick={() => {setisdelete(false)}}>Cancel</button>
                                     </div> :
                                     <div>
-                                        <div>
+                                        <div className="chatroom-name-dialog">
                                             ChatRoom : {pnts.chatroomname}
                                         </div>
-                                        <div>
+                                        <div className="chatroom-id-dialog">
                                             ID : #{pnts.chatroomjoinid}
                                         </div>
-                                        <button id="join-chatroom" onClick={() => { setChatroomJoined(pnts) }}>Join Chatroom</button>
-                                        <button id="delete-chatroom" onClick={() => setisdelete(true)}>Delete Chatroom</button>
+                                        <button id="join-chatroom" className="button-18" onClick={() => { setChatroomJoined(pnts) }}>Join Chatroom</button>
+                                        <button id="delete-chatroom" className="button-18"onClick={() => setisdelete(true)}>Delete Chatroom</button>
 
-                                        <div>
+                                        <div className="chatroom-name-dialog">
                                             Active users: {pnts.activeusers}
                                         </div>
                                     </div>
@@ -183,13 +183,13 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
     return (
         console.log("Data : ", data),
         <div className="results-container">
-            <div className="result-heading">ChatRooms near you</div>
+            <div className="result-heading">Available Chatrooms</div>
             {
                 data != null ?
                     <MapComponent points={data} />
                     :
                     <div>
-                        <h4>Sorry , No active chats near you</h4>
+                        <h4>No Active chatrooms currently near you</h4>
                     </div>
             }
             <div className="actionitems" >

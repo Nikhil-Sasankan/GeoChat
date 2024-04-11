@@ -24,7 +24,8 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         username: '',
         receivername: '',
         connected: false,
-        message: ''
+        message: '',
+        selectedProfile:profileiconames[2] 
     });
     useEffect(() => {
         console.log(userData);
@@ -166,7 +167,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
     }
 
     const handleKeyPressSendMessage = (event) => {
-        if (event.key === 'Enter') {
+        if (!(userData.message==null || userData.message==="")&&event.key === 'Enter') {
             sendValue();
         }
     }
@@ -207,7 +208,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
                         <div className="send-message">
                             <input type="text" className="input-message" placeholder="enter the message" value={userData.message} onKeyPress={handleKeyPressSendMessage} onChange={handleMessage} />
-                            <button type="button" className="send-button" onClick={sendValue}>Send</button>
+                            <button type="button" className="send-button" disabled={userData.message==null || userData.message==="" } onClick={sendValue}>Send</button>
                         </div>
                     </div>}
                     {/* {tab !== "CHATROOM" && <div className="chat-content">
@@ -234,6 +235,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                         className='profile-carousels'
                         showThumbs={false}
                         showArrows={true}
+                        infiniteLoop={true}
                         centerMode={true} // Center the images
                         centerSlidePercentage={100} // Centered slide takes full width
                         selectedItem={0} // Selected item index
@@ -260,8 +262,8 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                             <LoopIcon />
                         </button>
                     </div>
-                    <button className="button-register" onClick={registerUser}>
-                        Enter Chat room
+                    <button className={`button-register ${userData.username==null || userData.username==="" ? 'disabled' : ''}`} disabled={userData.username==null || userData.username===""} onClick={registerUser}>
+                        Enter Chat Room
                     </button>
 
                 </div>}

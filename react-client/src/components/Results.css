@@ -24,6 +24,7 @@
         width: 90%;
         /* Full width for mobile */
     }
+
     .button-create {
         margin-right: 30%;
     }
@@ -37,6 +38,7 @@
         width: 90%;
         /* Adjust width for desktop */
     }
+
     .button-create {
         margin-right: 100px;
     }
@@ -73,6 +75,7 @@
     cursor: pointer;
     transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
+
 .button-create {
     margin-top: 20px;
     margin-right: 20px;
@@ -95,12 +98,74 @@
     color: #ffffff;
     /* Text color on hover */
 }
+
 .button-create:hover {
     background-color: rgba(255, 255, 255, 0.2);
     /* Semi-transparent white */
     color: #ffffff;
     /* Text color on hover */
 }
-.actionitems{
+
+.actionitems {
     display: inline-block;
+}
+
+.chatroom-name-dialog {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    /* Regular */
+    font-size: 12px;
+}
+
+.chatroom-id-dialog {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 350;
+    /* Regular */
+    font-size: 12px;
+}
+
+/* CSS */
+.button-18 {
+    align-items: center;
+    background-color: #0A66C2;
+    border: 0;
+    border-radius: 10px;
+    color: #ffffff;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    justify-content: center;
+    line-height: 10px;
+    width: fit-content;
+    height: fit-content;
+    overflow: hidden;
+    padding: 7px;
+    margin:3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: center;
+    touch-action: manipulation;
+    transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+    user-select: none;
+    -webkit-user-select: none;
+    vertical-align: middle;
+}
+
+.button-18:hover,
+.button-18:focus {
+    background-color: #16437E;
+    color: #ffffff;
+}
+
+.button-18:active {
+    background: #09223b;
+    color: rgb(255, 255, 255, .7);
+}
+
+.button-18:disabled {
+    cursor: not-allowed;
+    background: rgba(0, 0, 0, .08);
+    color: rgba(0, 0, 0, .3);
 }
