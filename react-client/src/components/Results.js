@@ -15,8 +15,7 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
     const [isCreatingRoom, SetIsCreatingRoom] = useState(false);
     const inputValueRef = useRef('');
     const secretKeyRef = useRef('');
-    const isPrivateRef = useRef(null);
-    const [isprivate, setisprivate] = useState("NO")
+    const isPrivateRef = useRef(null); 
     const findChatroomid = useRef('')
     const mapRef = useRef(null);
     const [zoomLevel, setZoomLevel] = useState(15); // Initial zoom level state
@@ -38,8 +37,13 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
     };
 
     // Function to handle checkbox change
-    const handleIsPrivateChange = () => {
-        isPrivateRef.current.checked === true ? setisprivate("YES") : setisprivate("YES") // Update isPrivate based on checkbox status
+    const handleIsPrivateChange = (e) => {
+        if(e.target.checked){
+            isPrivateRef.current="YES"
+        }else{
+            isPrivateRef.current="NO"
+        }
+        
     };
 
     const handlefindchatroomid = (e) => {
@@ -62,7 +66,7 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
         console.log("Chat Room Name : ", chatroomname)
         console.log("Secret KEY :", secretKey)
 
-        handleCreateAPI(chatroomname, createChatRoomObj.lat, createChatRoomObj.lng, secretKey, isprivate)
+        handleCreateAPI(chatroomname, createChatRoomObj.lat, createChatRoomObj.lng, secretKey, isPrivateRef.current)
         setcreateChatRoomObj(null)
         SetIsCreatingRoom(false)
         console.log(isCreatingRoom)
@@ -121,22 +125,23 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                         <Popup>
                             <input
                                 type="text"
+                                className="inputbasic"
                                 onChange={handleCreatechatNameChange}
                                 placeholder="Enter ChatRoom Name"
                             />
                             <input
                                 type="text"
+                                className="inputbasic"
                                 onChange={handlesecretKeyChange}
                                 placeholder="Enter secret key"
-                            />
-                            <label htmlFor="isPrivateCheckbox">Private Room:</label>
+                            /><br></br>
+                            <label className="chatroom-name-dialog" htmlFor="isPrivateCheckbox">Private Room : </label>
                             <input
                                 type="checkbox"
-                                id="isPrivateCheckbox"
-                                ref={isPrivateRef}
+                                id="isPrivateCheckbox" 
                                 onChange={handleIsPrivateChange}
-                            />
-                            <button id="create-chatroom" onClick={handleCreateChatroom}>Create Chatroom</button>
+                            /><br></br>
+                            <button className="button-18" id="create-chatroom" onClick={handleCreateChatroom}>Create Chatroom</button>
                         </Popup>
                     </Marker>
                 }
@@ -151,11 +156,12 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                                     <div>
                                         <input
                                             type="text"
+                                            className="inputbasic"
                                             onChange={handlesecretKeyChange}
                                             placeholder="Enter secret key"
                                         />
-                                        <button id="delete-chatroombtn" onClick={() => {setChatroomdelete(pnts);setisdelete(false)}}>Delete Chatroom</button>
-                                        <button id="delete-chatroombtn" onClick={() => {setisdelete(false)}}>Cancel</button>
+                                        <button id="delete-chatroombtn" className="button-18 del" onClick={() => {setChatroomdelete(pnts);setisdelete(false)}}>Delete Chatroom</button>
+                                        <button id="delete-chatroombtn" className="button-18" onClick={() => {setisdelete(false)}}>Cancel</button>
                                     </div> :
                                     <div>
                                         <div className="chatroom-name-dialog">
@@ -165,7 +171,7 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                                             ID : #{pnts.chatroomjoinid}
                                         </div>
                                         <button id="join-chatroom" className="button-18" onClick={() => { setChatroomJoined(pnts) }}>Join Chatroom</button>
-                                        <button id="delete-chatroom" className="button-18"onClick={() => setisdelete(true)}>Delete Chatroom</button>
+                                        <button id="delete-chatroom" className="button-18 del"onClick={() => setisdelete(true)}>Delete Chatroom</button>
 
                                         <div className="chatroom-name-dialog">
                                             Active users: {pnts.activeusers}

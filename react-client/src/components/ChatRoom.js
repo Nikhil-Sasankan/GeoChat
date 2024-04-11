@@ -41,10 +41,11 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
     const generateRandomUsername = () => {
         let randomName = generateRandomName();
-        while (chatsessionroom.userspresent.includes(randomName)) {
+        while (chatsessionroom.userspresent!=null && chatsessionroom.userspresent.includes(randomName)) {
             console.log("Name already exists , finding a new name")
             randomName = generateRandomName();
         }
+        setenterIsDisabled(false)
         setUserData({ ...userData, "username": randomName });
     }
 
@@ -163,7 +164,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         console.log(value)
         setUserData({ ...userData, "username": value });
 
-        if (chatsessionroom.userspresent.includes(value)) {
+        if (chatsessionroom.userspresent!=null && chatsessionroom.userspresent.includes(value)) {
             setenterIsDisabled(true)
             setErrorDialogOpen("ALREADY_EXISTS"); // Show the error dialog
         }else if(value == null || value === ""){

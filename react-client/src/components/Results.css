@@ -142,7 +142,7 @@
     height: fit-content;
     overflow: hidden;
     padding: 7px;
-    margin:3px;
+    margin: 3px;
     padding-left: 10px;
     padding-right: 10px;
     text-align: center;
@@ -168,4 +168,24 @@
     cursor: not-allowed;
     background: rgba(0, 0, 0, .08);
     color: rgba(0, 0, 0, .3);
+}
+
+.button-18.del {
+    background: rgba(238, 26, 26, 0.856);
+}
+
+.inputbasic {
+    width: 150px;
+    padding: 1px;
+    border: 1px solid #ccc;
+    border-radius: 1px;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+/* Style when input box is focused */
+.inputbasic:focus {
+    border-color: dodgerblue;
+    box-shadow: 0 0 5px rgba(0, 0, 255, 0.3);
 }

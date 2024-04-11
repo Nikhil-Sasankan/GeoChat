@@ -97,7 +97,8 @@ public class ChatAppService {
 				usernamesList = new ArrayList<>();
 				for (User userNames : userspresent) {
 					usernamesList.add(userNames.getUsername());
-				}
+				} 
+				croom.setUserspresent(usernamesList);
 				res.add(croom);
 			}
 		}
