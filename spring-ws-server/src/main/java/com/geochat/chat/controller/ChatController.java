@@ -37,7 +37,7 @@ public class ChatController {
 	 * UI will let user to select the required chatroom and send back the preference from user
 	 */
     @PostMapping(value = "/getavailablerooms")
-    public ResponseEntity<ResponseBody> getUserData(@RequestBody GetRoomsDTO getroomsdto) {
+    public ResponseEntity<ResponseBody> getavailableroom(@RequestBody GetRoomsDTO getroomsdto) {
     	List<ChatRoomDTO> result = null;
     	ResponseBody body = null;
     	ResponseEntity<ResponseBody> resp = null;

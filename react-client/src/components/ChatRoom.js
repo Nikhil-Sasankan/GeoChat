@@ -153,6 +153,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
     const handleUsername = (event) => {
         const { value } = event.target;
+        console.log("Users present - >",chatsessionroom.userspresent);
         setUserData({ ...userData, "username": value });
     }
 

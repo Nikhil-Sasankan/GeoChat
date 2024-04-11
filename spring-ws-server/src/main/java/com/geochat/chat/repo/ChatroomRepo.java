@@ -35,4 +35,9 @@ public interface ChatroomRepo extends JpaRepository<Chatroom, Integer> {
 	@Query(value="select * from chatroom cr where cr.chatroomjoinid = :cid",nativeQuery = true)
 	Chatroom findbyjoin(@Param("cid")String deteroomid);
 
+	@Transactional
+	@Modifying
+	@Query(value="UPDATE chatroom cr SET cr.activeusers = cr.activeusers - 1 WHERE cr.chatroomid = :chatrmid ",nativeQuery = true)
+	void decrementActiveUsercount(@Param("chatrmid")int chatroomid);
+
 }
