@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css'
 import { useState, useRef } from "react";
 import L from 'leaflet';
 
-const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatsessionroom, handleCreateAPI, handleFindPrivateChats,handleDeleteAPI }) => {
+const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatsessionroom, handleCreateAPI, handleFindPrivateChats, handleDeleteAPI }) => {
     const [createChatRoomObj, setcreateChatRoomObj] = useState({
         name: '',
         lat: 0,
@@ -15,11 +15,19 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
     const [isCreatingRoom, SetIsCreatingRoom] = useState(false);
     const inputValueRef = useRef('');
     const secretKeyRef = useRef('');
-    const isPrivateRef = useRef(null); 
+    const isPrivateRef = useRef(null);
     const findChatroomid = useRef('')
     const mapRef = useRef(null);
     const [zoomLevel, setZoomLevel] = useState(15); // Initial zoom level state
     const [mapPosition, setMapPosition] = useState([userlatitude, userlongitude]); // Initial map position state
+    
+
+    const copyToClipboard = async (text) => {
+        try {
+            await navigator.clipboard.writeText(text); 
+        } catch (err) { 
+        }
+    };
 
     const setChatroomJoined = (selectedchatroom) => {
         setCurrentPage("CHATROOM_JOINED")
@@ -38,12 +46,12 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
 
     // Function to handle checkbox change
     const handleIsPrivateChange = (e) => {
-        if(e.target.checked){
-            isPrivateRef.current="YES"
-        }else{
-            isPrivateRef.current="NO"
+        if (e.target.checked) {
+            isPrivateRef.current = "YES"
+        } else {
+            isPrivateRef.current = "NO"
         }
-        
+
     };
 
     const handlefindchatroomid = (e) => {
@@ -72,11 +80,11 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
         console.log(isCreatingRoom)
     }
 
-    const setChatroomdelete = (rooms) =>{ 
-        handleDeleteAPI(rooms.chatroomname,secretKeyRef.current,rooms.chatroomjoinid)
-        secretKeyRef.current=null
+    const setChatroomdelete = (rooms) => {
+        handleDeleteAPI(rooms.chatroomname, secretKeyRef.current, rooms.chatroomjoinid)
+        secretKeyRef.current = null
     }
- 
+
     const ClickHandler = () => {
         useMapEvents({
             click: handleMapClick,
@@ -138,7 +146,7 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                             <label className="chatroom-name-dialog" htmlFor="isPrivateCheckbox">Private Room : </label>
                             <input
                                 type="checkbox"
-                                id="isPrivateCheckbox" 
+                                id="isPrivateCheckbox"
                                 onChange={handleIsPrivateChange}
                             /><br></br>
                             <button className="button-18" id="create-chatroom" onClick={handleCreateChatroom}>Create Chatroom</button>
@@ -160,18 +168,19 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                                             onChange={handlesecretKeyChange}
                                             placeholder="Enter secret key"
                                         />
-                                        <button id="delete-chatroombtn" className="button-18 del" onClick={() => {setChatroomdelete(pnts);setisdelete(false)}}>Delete Chatroom</button>
-                                        <button id="delete-chatroombtn" className="button-18" onClick={() => {setisdelete(false)}}>Cancel</button>
+                                        <button id="delete-chatroombtn" className="button-18 del" onClick={() => { setChatroomdelete(pnts); setisdelete(false) }}>Delete Chatroom</button>
+                                        <button id="delete-chatroombtn" className="button-18" onClick={() => { setisdelete(false) }}>Cancel</button>
                                     </div> :
-                                    <div>
+                                    <div> 
                                         <div className="chatroom-name-dialog">
                                             ChatRoom : {pnts.chatroomname}
                                         </div>
                                         <div className="chatroom-id-dialog">
                                             ID : #{pnts.chatroomjoinid}
+                                            <button onClick={() => {copyToClipboard(pnts.chatroomjoinid)}}>🔗</button>
                                         </div>
                                         <button id="join-chatroom" className="button-18" onClick={() => { setChatroomJoined(pnts) }}>Join Chatroom</button>
-                                        <button id="delete-chatroom" className="button-18 del"onClick={() => setisdelete(true)}>Delete Chatroom</button>
+                                        <button id="delete-chatroom" className="button-18 del" onClick={() => setisdelete(true)}>Delete Chatroom</button>
 
                                         <div className="chatroom-name-dialog">
                                             Active users: {pnts.activeusers}
@@ -189,15 +198,8 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
     return (
         console.log("Data : ", data),
         <div className="results-container">
-            <div className="result-heading">Available Chatrooms</div>
-            {
-                data != null ?
-                    <MapComponent points={data} />
-                    :
-                    <div>
-                        <h4>No Active chatrooms currently near you</h4>
-                    </div>
-            }
+            <div className="result-heading">Available Chatrooms : {data==null || data==[] || data.length==0 ?'0 ,  No Active chatrooms currently near you' :data.length}</div>
+            <MapComponent points={data} />
             <div className="actionitems" >
                 {isModalOpen ?
                     <div>

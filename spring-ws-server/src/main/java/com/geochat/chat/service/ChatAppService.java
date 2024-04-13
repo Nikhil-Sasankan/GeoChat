@@ -44,17 +44,17 @@ public class ChatAppService {
 		// Before making the List we preprocess data to remove the inactive session data
 		cityChatRooms = cleanInactiveSessions(cityChatRooms);
 
-		System.out.println("Chatrooms in city : " + cityChatRooms.size());
+		System.out.println("Chatrooms total in datastore : " + cityChatRooms.size());
 		// Fetched the chatrooms in radius according to the provided geoloaction
 		List<Chatroom> availablecityChatRooms = CalculationUtils.findNearbyChatRooms(userlatitude, userlongitude,
 				cityChatRooms);
 		List<ChatRoomDTO> res = new ArrayList<ChatRoomDTO>();
 		ChatRoomDTO croom = null;
-		System.out.println(availablecityChatRooms.size());
+		System.out.println("Chatrooms total in user vicinity : "+availablecityChatRooms.size());
 		List<User> userspresent = null;
 		List<String> usernamesList = null;
 		for (Chatroom chatroom : availablecityChatRooms) {
-			if (chatroom.getIsprivate().equalsIgnoreCase("YES")) {
+			if (chatroom.getIsprivate()!= null && chatroom.getIsprivate().equalsIgnoreCase("YES")) {
 				continue;
 			}
 			croom = new ChatRoomDTO();
@@ -76,8 +76,8 @@ public class ChatAppService {
 			croom.setUserspresent(usernamesList);
 			res.add(croom);
 		}
-		System.out.println("Chatrooms available in city : " + res.size());
-		System.out.println(getroomdto.getRoomkey());
+		System.out.println("Chatrooms available in vicinity final: " + res.size());
+		System.out.println("Chatroom id to fetch if any "+getroomdto.getRoomkey());
 		// Adding the user requested private chatroom to the list and this is
 		// irrespective of the location
 		for (Chatroom rooms : cityChatRooms) {
@@ -102,7 +102,7 @@ public class ChatAppService {
 				res.add(croom);
 			}
 		}
-
+		System.out.println("Final Result size "+ res.size());
 		return res;
 	}
 
@@ -205,6 +205,9 @@ public class ChatAppService {
 		chatroom.setCreatetime(new Date());
 		chatroom.setLasttimeactive(new Date());
 		chatroom.setActiveusers(0);
+		if(chatroom.getIsprivate()==null) {
+			chatroom.setIsprivate("NO");
+		}
 
 		UUID uuid = UUID.randomUUID();
 		String uniqueId = uuid.toString();

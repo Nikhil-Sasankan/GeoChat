@@ -133,7 +133,7 @@ public class ChatController {
     // API websocket that handles messages
     @MessageMapping("/message")
     public MessageDTO receiveMessage(@Payload MessageDTO message) throws Exception{
-    	System.out.println("Validating user message");
+    	System.out.println("Validating user message for : "+message.getStatus());
     	try {
     		service.usermessageValidation(message);
     		System.out.println("Validated user message");

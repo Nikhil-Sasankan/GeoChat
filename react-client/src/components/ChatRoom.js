@@ -21,6 +21,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
     const [tab, setTab] = useState("CHATROOM");
     const chatContentRef = useRef(null); // Ref for chat-content
     const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+    const[selectedporfile,setselectedprofile] = useState(0)
     const [userData, setUserData] = useState({
         userId: '',
         username: '',
@@ -41,6 +42,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
     const generateRandomUsername = () => {
         let randomName = generateRandomName();
+        setselectedprofile(parseInt(profileiconames.length * Math.random()))
         while (chatsessionroom.userspresent!=null && chatsessionroom.userspresent.includes(randomName)) {
             console.log("Name already exists , finding a new name")
             randomName = generateRandomName();
@@ -80,21 +82,29 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
     const userJoin = () => {
         var chatMessage = {
             senderName: userData.username,
-            status: "JOIN"
+            status: "JOIN",
+            chatroomid: chatsessionroom.chatroomid
         };
         stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
+        // stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
     }
 
     const onMessageReceived = (payload) => {
         var payloadData = JSON.parse(payload.body);
+        console.log("Latest message received from: "+payloadData.senderName)
         switch (payloadData.status) {
             case "JOIN":
+                console.log("Just joined hi")
                 if (!privateChats.get(payloadData.senderName)) {
                     privateChats.set(payloadData.senderName, []);
                     setPrivateChats(new Map(privateChats));
                 }
                 break;
             case "MESSAGE":
+                if (!privateChats.get(payloadData.senderName)) {
+                    privateChats.set(payloadData.senderName, []);
+                    setPrivateChats(new Map(privateChats));
+                }
                 publicChats.push(payloadData);
                 setPublicChats([...publicChats]);
                 break;
@@ -103,6 +113,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
     const onPrivateMessage = (payload) => {
         var payloadData = JSON.parse(payload.body);
+        console.log("Private Messgage : "+payloadData)
         if (privateChats.get(payloadData.senderName)) {
             privateChats.get(payloadData.senderName).push(payloadData);
             setPrivateChats(new Map(privateChats));
@@ -139,24 +150,24 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         }
     }
 
-    // const sendPrivateValue = () => {
-    //     if (stompClient) {
-    //         var chatMessage = {
-    //             senderName: userData.username,
-    //             receiverName: tab,
-    //             chatroomid: chatsessionroom.chatroomid,
-    //             message: userData.message,
-    //             status: "MESSAGE"
-    //         };
+    const sendPrivateValue = () => {
+        if (stompClient) {
+            var chatMessage = {
+                senderName: userData.username,
+                receiverName: tab,
+                chatroomid: chatsessionroom.chatroomid,
+                message: userData.message,
+                status: "MESSAGE"
+            };
 
-    //         if (userData.username !== tab) {
-    //             privateChats.get(tab).push(chatMessage);
-    //             setPrivateChats(new Map(privateChats));
-    //         }
-    //         stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
-    //         setUserData({ ...userData, "message": "" });
-    //     }
-    // }
+            if (userData.username !== tab) {
+                privateChats.get(tab).push(chatMessage);
+                setPrivateChats(new Map(privateChats));
+            }
+            stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+            setUserData({ ...userData, "message": "" });
+        }
+    }
 
     const handleUsername = (event) => {
         const { value } = event.target;
@@ -201,9 +212,9 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                     <div className='chat-title'>{chatsessionroom.chatroomname}</div>
                     <div className="member-list">
                         <ul>
-                            <li onClick={() => { setTab("CHATROOM") }} className={`member ${tab === "CHATROOM" && "active"}`}>Chatroom</li>
+                            <li onClick={() => { setTab("CHATROOM") }} className={`member chatroom ${tab === "CHATROOM" && "active"}`}>Chatroom</li>
                             {[...privateChats.keys()].map((name, index) => (
-                                <li onClick={() => { setTab(name) }} className={`member ${tab === name && "active"}`} key={index}>{name}</li>
+                                <li onClick={() => { setTab(name) }} className={`member ${tab === name && "active"} ${name===userData.username && "self"}`} key={index}  >{name===userData.username?"You":name}</li>
                             ))}
                         </ul>
                     </div>
@@ -233,7 +244,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                             <button type="button" className="send-button" disabled={userData.message == null || userData.message === ""} onClick={sendValue}>Send</button>
                         </div>
                     </div>}
-                    {/* {tab !== "CHATROOM" && <div className="chat-content">
+                    {tab !== "CHATROOM" && <div className="chat-content">
                         <ul className="chat-messages">
                             {[...privateChats.get(tab)].map((chat, index) => (
                                 <li className={`message ${chat.senderName === userData.username && "self"}`} key={index}>
@@ -248,7 +259,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                             <input type="text" className="input-message" placeholder="enter the message" value={userData.message} onChange={handleMessage} />
                             <button type="button" className="send-button" onClick={sendPrivateValue}>Send</button>
                         </div>
-                    </div>} */}
+                    </div>}
                 </div>
                 :
 
@@ -260,7 +271,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                         infiniteLoop={true}
                         centerMode={true} // Center the images
                         centerSlidePercentage={100} // Centered slide takes full width
-                        selectedItem={0} // Selected item index
+                        selectedItem={selectedporfile} // Selected item index
                         onChange={(element) => handleProfileSelect(element)}
                     >
                         {profileiconames.map((element, index) => (
