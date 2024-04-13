@@ -1,0 +1,3 @@
+2024-04-13 20:48:34 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CHATROOM" not found; SQL statement:
+select chatroom0_.chatroomid as chatroom1_0_, chatroom0_.activeusers as activeus2_0_, chatroom0_.chatroomjoinid as chatroom3_0_, chatroom0_.chatroomname as chatroom4_0_, chatroom0_.chatroomowner as chatroom5_0_, chatroom0_.citycode as citycode6_0_, chatroom0_.createtime as createti7_0_, chatroom0_.deletetime as deleteti8_0_, chatroom0_.isprivate as isprivat9_0_, chatroom0_.lasttimeactive as lasttim10_0_, chatroom0_.latitude as latitud11_0_, chatroom0_.longitude as longitu12_0_, chatroom0_.secret_key as secret_13_0_, chatroom0_.statecode as stateco14_0_ from chatroom chatroom0_ [42102-200]
