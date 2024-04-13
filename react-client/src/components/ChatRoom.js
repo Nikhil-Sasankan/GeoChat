@@ -31,7 +31,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         receivername: '',
         connected: false,
         message: '',
-        selectedProfile: profileiconames[2]
+        selectedProfile: profileiconames[0]
     });
     useEffect(() => {
         console.log(userData);
@@ -119,6 +119,8 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                 publicChats.push(payloadData);
                 setPublicChats([...publicChats]);
                 break;
+            default:
+                console.log("NO MESSAGE ACTION")
         } 
     }
 
@@ -235,7 +237,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                         <ul>
                             <li onClick={() => { setTab("CHATROOM") }} className={`member chatroom ${tab === "CHATROOM" && "active"}`}>Chatroom</li>
                             {[...privateChats.keys()].map((name, index) => (
-                                <li onClick={() => { setTab(name);console.log("set as read "); markAsRead(name);}} className={`member ${tab === name && "active"} ${name===userData.username && "self"} ${tab != name && unreadMessages[name] && "unread"}  `} key={index}  >{name===userData.username?"You":name} {tab != name && unreadMessages[name] && "🔘"}</li>
+                                <li onClick={() => { setTab(name);console.log("set as read "); markAsRead(name);}} className={`member ${tab === name && "active"} ${name===userData.username && "self"} ${tab !== name && unreadMessages[name] && "unread"}  `} key={index}  >{name===userData.username?"You":name} {tab !== name && unreadMessages[name] && "🔘"}</li>
                             ))}
                         </ul>
                     </div>

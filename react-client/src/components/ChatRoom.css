@@ -49,7 +49,7 @@ body {
     font-weight: 200;
     /* Regular */
     font-size: 20px;
-    color: #000000;
+    color: rgb(124, 2, 2);
     /* Text color */
     backdrop-filter: blur(5 px);
     /* Blur effect for background */
@@ -198,7 +198,7 @@ body {
       box-shadow: 0 0 0px 0px rgb(241, 126, 126);/* Initial shadow */ 
     } 
     50% {
-        box-shadow: 0 0 2px 2px rgb(206, 41, 41); /* Glow effect */ 
+        box-shadow: 0 0 5px 4px rgb(206, 41, 41); /* Glow effect */ 
       } 
     100% {
       box-shadow: 0 0 0px 0px rgb(241, 126, 126); /* Back to initial shadow */ 
