@@ -44,6 +44,18 @@ body {
     padding: 1px;
     /* Add padding to prevent text from touching edges */
 }
+.chat-title.id{
+    font-family: 'Poppins', sans-serif;
+    font-weight: 200;
+    /* Regular */
+    font-size: 20px;
+    color: #000000;
+    /* Text color */
+    backdrop-filter: blur(5 px);
+    /* Blur effect for background */
+    padding: 1px;
+    /* Add padding to prevent text from touching edges */
+}
 
 .register {
     background-image: url('https://images.squarespace-cdn.com/content/v1/6131aab0e93278616cc6f6b8/1630812785434-3TCPK3QM374NBTP3VI11/25552.jpg?format=1000w');

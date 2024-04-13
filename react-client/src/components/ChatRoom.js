@@ -230,7 +230,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         <div className="container">
             {userData.connected ?
                 <div className="chat-box">
-                    <div className='chat-title'>{chatsessionroom.chatroomname}</div>
+                    <div className='chat-title'>{chatsessionroom.chatroomname}  <h7 className='chat-title id'>#{chatsessionroom.chatroomjoinid}</h7></div>
                     <div className="member-list">
                         <ul>
                             <li onClick={() => { setTab("CHATROOM") }} className={`member chatroom ${tab === "CHATROOM" && "active"}`}>Chatroom</li>
