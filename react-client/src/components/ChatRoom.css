@@ -137,10 +137,16 @@ body {
     .container  {
         height: 95vh;
     } 
+    .chat-title.id{
+        font-size: 15px;
+    }
 }
 @media (min-width: 600px) {
     .map-container {
         height: 100vh; 
+    }
+    .chat-title.id{
+        font-size: 20px;
     }
 }
 
@@ -261,7 +267,7 @@ body {
     height: 20px;
     background-color: rgb(212, 8, 8);
     color: #fff;
-    border-radius: 10%;
+    border-radius: 8%;
     text-align: center; 
     align-items: center; 
     line-height: 20px;
