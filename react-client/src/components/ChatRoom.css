@@ -146,22 +146,43 @@ body {
     padding: 7px;
     margin:1px;
     border-radius: 10px;
-    background-color: #90c1f5;
-    color: #fff;
+    background-color:  rgb(241, 126, 126);
+    color: #000000;
     font-weight: 500;
     width: fit-content;
 }
 
 .member-list li.active {
-    background-color: #0056b3;
+    color: #fff;
+    background-color: rgb(206, 41, 41); 
     /* Darker shade for active tab */
 }
 .member-list li.self {
-    background-color: #00b336;
+    color: #fff; 
+    background-color: #0089b3;
     /* Darker shade for active tab */
 }
+.member-list li.unread {
+    animation: glowAnimation 1s ease-in-out infinite alternate;
+    /* Darker shade for active tab */
+}
+
+/* CSS for dim and glow effect */
+@keyframes glowAnimation {
+    0% {
+      box-shadow: 0 0 0px 0px rgb(241, 126, 126);/* Initial shadow */ 
+    } 
+    50% {
+        box-shadow: 0 0 2px 2px rgb(206, 41, 41); /* Glow effect */ 
+      } 
+    100% {
+      box-shadow: 0 0 0px 0px rgb(241, 126, 126); /* Back to initial shadow */ 
+    }
+  }
+
 .member-list li.chatroom {
-    background-color: #b30c00;
+    color: #fff;
+    background-color: rgb(120, 201, 177) ;
     /* Darker shade for active tab */
 }
 .chat-content {

@@ -22,6 +22,9 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
     const chatContentRef = useRef(null); // Ref for chat-content
     const [errorDialogOpen, setErrorDialogOpen] = useState(false);
     const[selectedporfile,setselectedprofile] = useState(0)
+    // to indicate the unread messages 
+    const [unreadMessages, setUnreadMessages] = useState({});
+
     const [userData, setUserData] = useState({
         userId: '',
         username: '',
@@ -34,6 +37,14 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         console.log(userData);
     }, [userData]);
 
+ 
+    // Function to reset unread messages for a sender
+    const markAsRead = (senderName) => {
+        setUnreadMessages((prevUnread) => ({
+            ...prevUnread,
+            [senderName]: false, // Mark sender as read
+        }));
+    };
 
     const handleProfileSelect = (profile) => {
         console.log("profileid", profileiconames[profile])
@@ -108,7 +119,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                 publicChats.push(payloadData);
                 setPublicChats([...publicChats]);
                 break;
-        }
+        } 
     }
 
     const onPrivateMessage = (payload) => {
@@ -123,6 +134,11 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
             privateChats.set(payloadData.senderName, list);
             setPrivateChats(new Map(privateChats));
         }
+        console.log("Setting unread")
+        setUnreadMessages((prevUnread) => ({
+            ...prevUnread,
+            [payloadData.senderName]: true, // Mark sender as having unread messages
+        }));
     }
 
     const onError = (err) => {
@@ -198,9 +214,14 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         }
     }
 
-    const handleKeyPressSendMessage = (event) => {
+    const handleKeyPublicPressSendMessage = (event) => {
         if (!(userData.message == null || userData.message === "") && event.key === 'Enter') {
             sendValue();
+        }
+    }
+    const handleKeyPrivatePressSendMessage = (event) => {
+        if (!(userData.message == null || userData.message === "") && event.key === 'Enter') {
+            sendPrivateValue();
         }
     }
 
@@ -214,7 +235,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                         <ul>
                             <li onClick={() => { setTab("CHATROOM") }} className={`member chatroom ${tab === "CHATROOM" && "active"}`}>Chatroom</li>
                             {[...privateChats.keys()].map((name, index) => (
-                                <li onClick={() => { setTab(name) }} className={`member ${tab === name && "active"} ${name===userData.username && "self"}`} key={index}  >{name===userData.username?"You":name}</li>
+                                <li onClick={() => { setTab(name);console.log("set as read "); markAsRead(name);}} className={`member ${tab === name && "active"} ${name===userData.username && "self"} ${tab != name && unreadMessages[name] && "unread"}  `} key={index}  >{name===userData.username?"You":name} {tab != name && unreadMessages[name] && "🔘"}</li>
                             ))}
                         </ul>
                     </div>
@@ -240,7 +261,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                         </ul>
 
                         <div className="send-message">
-                            <input type="text" className="input-message" placeholder="enter the message" value={userData.message} onKeyPress={handleKeyPressSendMessage} onChange={handleMessage} />
+                            <input type="text" className="input-message" placeholder="enter the message" value={userData.message} onKeyPress={handleKeyPublicPressSendMessage} onChange={handleMessage} />
                             <button type="button" className="send-button" disabled={userData.message == null || userData.message === ""} onClick={sendValue}>Send</button>
                         </div>
                     </div>}
@@ -256,8 +277,8 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                         </ul>
 
                         <div className="send-message">
-                            <input type="text" className="input-message" placeholder="enter the message" value={userData.message} onChange={handleMessage} />
-                            <button type="button" className="send-button" onClick={sendPrivateValue}>Send</button>
+                            <input type="text" className="input-message" placeholder="enter the message" value={userData.message} onKeyPress={handleKeyPrivatePressSendMessage} onChange={handleMessage} />
+                            <button type="button" className="send-button" disabled={userData.message == null || userData.message === ""} onClick={sendPrivateValue}>Send</button>
                         </div>
                     </div>}
                 </div>
