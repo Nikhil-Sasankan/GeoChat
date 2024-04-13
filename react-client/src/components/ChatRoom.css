@@ -120,6 +120,16 @@ body {
     flex-direction: column;
     height: 100vh;
     /* Use full viewport height */
+} 
+@media (max-width: 600px) {
+    .container  {
+        height: 95vh;
+    } 
+}
+@media (min-width: 600px) {
+    .map-container {
+        height: 100vh; 
+    }
 }
 
 .chat-box {
@@ -131,8 +141,11 @@ body {
     flex-direction: column;
 }
 
+.member-list{
+    overflow-x: auto;
+}
 .member-list ul {
-    display: inline-flex;
+    display: inline-flex;  
     font-family: 'Poppins', sans-serif;
     font-size: 10px; 
     list-style-type: none;
