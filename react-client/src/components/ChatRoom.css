@@ -238,7 +238,7 @@ body {
     margin: 1px 1px 1px 1px; 
     height: min-content;
     border-radius: 1px;
-    background-color: rgb(220, 233, 231);
+    background-color: rgba(219, 240, 235, 0.082);
     font-family: 'Poppins', sans-serif;
     font-size: 12px;
     text-align: right;
@@ -339,18 +339,17 @@ body {
     margin-left: 2px;
     flex-grow: 1; /* Allow message data to grow */
     margin-right: 5px;
-    padding: 4px;
+    padding: 2px 6px 2px 6px;
     border-radius: 10px;
-    background-color:rgba(240, 122, 122, 0.26);
-    text-align: left;   
-    max-width: 50%;
+    background-color:rgba(230, 61, 61, 0.404);
+    text-align: left;    
     word-wrap:break-word; /* Allow long words to break and wrap */
     overflow-wrap: break-word; /* Ensure content wraps within container */ 
     overflow-x: auto; 
 }
 
 .self .message-data {
-    background-color: rgba(127, 230, 212, 0.26); 
+    background-color: rgba(22, 167, 143, 0.315); 
     text-align: right; 
 }
 

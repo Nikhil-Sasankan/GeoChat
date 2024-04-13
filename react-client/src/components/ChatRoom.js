@@ -250,7 +250,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                                         <div className="avatar">
                                             {chat.senderName}
                                         </div></>}
-                                    <div className="message-data">{chat.message}</div>
+                                    <div className="message-data" style={{maxWidth : Math.min(window.innerWidth*0.4,chat.message.length*9)+"px"}}>{chat.message}</div>
                                     {chat.senderName === userData.username && <>
                                         <div className="avatar self">
                                             {chat.senderName}
@@ -272,7 +272,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                             {[...privateChats.get(tab)].map((chat, index) => (
                                 <li className={`message ${chat.senderName === userData.username && "self"}`} key={index}>
                                     {chat.senderName !== userData.username && <div className="avatar">{chat.senderName}</div>}
-                                    <div className="message-data">{chat.message}</div>
+                                    <div className="message-data" style={{maxWidth : Math.min(window.innerWidth*0.4,chat.message.length*9)+"px"}} >{chat.message}</div>
                                     {chat.senderName === userData.username && <div className="avatar self">{chat.senderName}</div>}
                                 </li>
                             ))}
