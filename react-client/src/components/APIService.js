@@ -1,4 +1,4 @@
-export const ipaddress = 'http://localhost:8080'
+export const ipaddress = 'http://https://geochatbackend.onrender.com'
 
 // ----------------------------- API to fetch the available chatrooms ---------------------------------// 
 export const getAvailableChatRooms = async (userlatitude, userlongitude, chatroomjoinid) => {
