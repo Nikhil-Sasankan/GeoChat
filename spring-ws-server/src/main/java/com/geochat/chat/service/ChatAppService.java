@@ -15,22 +15,24 @@ import com.geochat.chat.dto.GetRoomsDTO;
 import com.geochat.chat.dto.MessageDTO;
 import com.geochat.chat.dto.SessionDTO;
 import com.geochat.chat.model.Chatroom;
+import com.geochat.chat.model.Message;
+import com.geochat.chat.model.Status;
 import com.geochat.chat.model.User;
 import com.geochat.chat.repo.ChatroomRepo;
+import com.geochat.chat.repo.MessageRepo;
 import com.geochat.chat.repo.UserRepo;
 
 @Component
 public class ChatAppService {
-
 	@Autowired
 	UserRepo userrepo;
-
+	@Autowired
+	MessageRepo messagerepo;
 	@Autowired
 	ChatroomRepo chatroomrepo;
 
 	public List<ChatRoomDTO> fetchChatRoomsAvailable(GetRoomsDTO getroomdto) {
 		// Fetch the users geolocation
-
 		User user = getroomdto.getUser();
 		double userlatitude = user.getLatitude();
 		double userlongitude = user.getLongitude();
@@ -76,8 +78,8 @@ public class ChatAppService {
 			croom.setUserspresent(usernamesList);
 			res.add(croom);
 		}
-		System.out.println("Chatrooms available in vicinity final: " + res.size());
-		System.out.println("Chatroom id to fetch if any "+getroomdto.getRoomkey());
+		System.out.println("Chatrooms available in vicinity : " + res.size());
+		System.out.println("Additional chatrooms to fetch : "+getroomdto.getRoomkey());
 		// Adding the user requested private chatroom to the list and this is
 		// irrespective of the location
 		for (Chatroom rooms : cityChatRooms) {
@@ -119,12 +121,12 @@ public class ChatAppService {
 		List<String> userids = new ArrayList<>();
 		// Fetches the complete list of data from the users tables
 		List<User> userList = userrepo.findAll(); 
-		System.out.println(userList.toString());
+//		System.out.println(userList.toString());
 		for (User user : userList) {
 			LocalDateTime userlastactivetime = user.getLastactivetime().toInstant().atZone(java.time.ZoneId.systemDefault())
 					.toLocalDateTime();
-			System.out.println("User last active time : "+userlastactivetime);
-			System.out.println("Current time : "+localDateminusFiveMisutes);
+//			System.out.println("User last active time : "+userlastactivetime);
+//			System.out.println("Current time : "+localDateminusFiveMisutes);
 			if (userlastactivetime.isBefore(localDateminusFiveMisutes)) {
 				userids.add(user.getUserid() + "");
 				chatroomrepo.decrementActiveUsercount(user.getChatroomid());
@@ -145,6 +147,9 @@ public class ChatAppService {
 				cityChatRooms.remove(chatroom);
 			}
 		}
+		
+		// Deleteing all the messages for that room
+		messagerepo.deleteAllforChatroom(croomIDS);
 		// deleteing all the inactive chatroom
 		chatroomrepo.deleteAllByjoinid(croomIDS);
 
@@ -171,7 +176,24 @@ public class ChatAppService {
 
 		// also will increment the active user count in the chatroom table
 		chatroomrepo.incrementactiveusers(prefChatroomid);
-		System.out.println("Chat room user incremented");
+		System.out.println("Chat room user count incremented");
+		
+		// Fetching all the older messages for this chatroom
+		List<Message> msgs = messagerepo.findAllbyChatrooomid(prefChatroomid); 
+		List<MessageDTO> oldermess = new ArrayList<>();
+		
+		for (Message messages : msgs) {
+			MessageDTO msdto = new MessageDTO();
+			msdto.setChatroomid(prefChatroomid+"");
+			msdto.setDate(messages.getTimesent());
+			msdto.setMessage(messages.getMessagecontent());
+			msdto.setMessagetype(messages.getMessagetype());
+			msdto.setReceiverName(messages.getReceiverName());
+			msdto.setSelectedProfile(messages.getSelectedprofile());
+			msdto.setSenderid("");
+			msdto.setSenderName(messages.getUsername());
+			oldermess.add(msdto);
+		}
 
 		SessionDTO createdsessiondata = new SessionDTO();
 		UUID uuid = UUID.randomUUID();
@@ -180,6 +202,7 @@ public class ChatAppService {
 
 		// Return back the saved deatils to the UI
 		createdsessiondata.setUserdata(saveduser);
+		createdsessiondata.setOldermessages(oldermess);
 		System.out.println(createdsessiondata.toString());
 		return createdsessiondata;
 	}
@@ -189,13 +212,27 @@ public class ChatAppService {
 		String username = message.getSenderName();
 		// Verify if the user has created a session for the chatroom he is sending
 		// message to
-		System.out.println("User : " + username + "-----> Roomid : " + chatroomid + " ;-> " + message.getMessage());
+		//System.out.println("User : " + username + "-----> Roomid : " + chatroomid + " ;-> " + message.getMessage());
 		User users = userrepo.ifUserValidforChatRoom(chatroomid, username);
 		if (users == null) {
 			throw new Exception("The users is of invalid session");
 		}
 		// incase user is valid, then update is lastactive time 
 		users.setLastactivetime(new Date());
+		// Also create a message save in the DB
+		Message savemessage = new Message();
+		savemessage.setChatroomid(message.getChatroomid());
+		if(message.getStatus().equals(Status.JOIN)||message.getMessage()==null) {
+			return;
+		}
+		savemessage.setMessagecontent(message.getMessage()); 
+		savemessage.setMessagerefer("");
+		savemessage.setMessagetype(message.getMessagetype());
+		savemessage.setSelectedprofile(message.getSelectedProfile());
+		savemessage.setTimesent(new Date()); 
+		savemessage.setUsername(message.getSenderName());
+		messagerepo.save(savemessage);
+		
 		userrepo.save(users);
 		System.out.println("User is valid");
 	}
@@ -214,19 +251,19 @@ public class ChatAppService {
 		chatroom.setChatroomjoinid(uniqueId);
 
 		Chatroom createdChatroom = chatroomrepo.save(chatroom);
-		System.out.println("Saved successfully");
+		System.out.println("Saved chatroom data successfully");
 		return createdChatroom;
 	}
 
 	public String deletechatrooms(Chatroom chatroom) throws Exception {
 		String deteroomid = chatroom.getChatroomjoinid();
 		Chatroom crm = chatroomrepo.findbyjoin(deteroomid);
-		System.out.println("USer key : " + chatroom.getSecretKey());
-		System.out.println("Origianl : " + crm.getSecretKey());
+//		System.out.println("User Key : " + chatroom.getSecretKey());
+//		System.out.println("Original Key : " + crm.getSecretKey());
 
 		if (!crm.getSecretKey().equals(chatroom.getSecretKey())) {
-			System.out.println("Invalid key");
-			throw new Exception("Invalid secret key");
+//			System.out.println("Invalid key");
+			throw new Exception("Invalid secret key: Failed to delete chatroom");
 		}
 		List<String> deletionrooomids = new ArrayList<>();
 		deletionrooomids.add(deteroomid);

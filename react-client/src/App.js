@@ -20,7 +20,7 @@ const App = () => {
       setAvailableRooms(chatroomdata)
       setCurrentPage("AVAILABLE_CHATROOMS")
     } catch (error) {
-      console.log("Error creating the new room", error)
+      console.log("Error creating new chatroom", error)
     }
 
   }
@@ -45,12 +45,10 @@ const App = () => {
   const handleJoinClick = () => {
     try {
       if (navigator.geolocation) {
-        console.log("Browser Naviagtor : " + document.navigator)
         navigator.geolocation.getCurrentPosition(
           async (position) => {
             const { latitude, longitude } = position.coords;
-            console.log("User Location : ", position)
-            console.log("Latitude : ", latitude, " , Longitude : ", longitude)
+            console.log("User Location : ", position) 
             setUsergeolocation({
               userlatitude: latitude,
               userlongitude: longitude
@@ -61,7 +59,7 @@ const App = () => {
           }
         )
       } else {
-        console.log("Navigator ")
+        console.log("Navigator Error! Try again")
       }
     } catch (error) {
       console.log(error)

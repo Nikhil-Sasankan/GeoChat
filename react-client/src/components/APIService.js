@@ -56,6 +56,7 @@ export const createUserSession = async ({usergeolocation,userData,chatsessionroo
 
         const data = await response.json();
         console.log("User Data Saved Successfully --- >", data)
+        return data;
     } catch (error) {
         console.log(error)
     }

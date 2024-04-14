@@ -23,6 +23,7 @@ public class User {
 	private Date createtime;
 	private Date lastactivetime;
 	private String username;
+	private String profileselected ;
 	private String useruniqueid;
 	private int chatroomid;
 	private String isactive;

@@ -19,13 +19,14 @@ import lombok.Data;
 public class Message {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int messageid;
-	
-	private String userid ;
+	private int messageid; 
+	private String username;
 	private String chatroomid ;
-	private String messagetype ;
+	private String messagetype ; 
 	private Date timesent;
+	private String receiverName;
 	private String messagerefer;
+	private String selectedprofile;
 	private String messagecontent;
 	
 }

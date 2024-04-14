@@ -62,8 +62,6 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
         const mapCenter = map.getCenter(); // Get the center coordinates
         setZoomLevel(zoomLevel)
         setMapPosition(mapCenter)
-        console.log("Zoom", zoomLevel)
-        console.log("Center", mapCenter)
         setcreateChatRoomObj({ ...createChatRoomObj, name: '', lat: e.latlng.lat, lng: e.latlng.lng });
     };
 
@@ -94,8 +92,6 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
         const chatroomname = inputValueRef.current
         const secretKey = secretKeyRef.current
         setcreateChatRoomObj({ ...createChatRoomObj, name: inputValueRef.current })
-        console.log("Chat Room Name : ", chatroomname)
-        console.log("Secret KEY :", secretKey)
 
         handleCreateAPI(chatroomname, createChatRoomObj.lat, createChatRoomObj.lng, secretKey, isPrivateRef.current)
         setcreateChatRoomObj(null)
@@ -116,7 +112,6 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
     };
 
     const handleFindChatroms = () => {
-        console.log("The find chatroom id is : " + findChatroomid.current)
         handleFindPrivateChats(findChatroomid.current)
     }
 
@@ -178,7 +173,6 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                 }
 
                 {points.map((pnts, index) => {
-                    console.log(pnts)
                     return (
                         <Marker key={index} position={[pnts.latitude, pnts.longitude]} icon={pnts.isprivate === "YES" ? privateRoomIcon : publicRoomIcon}  >
                             {setZoomLevel(calculateZoomLevel(pnts.latitude - userlatitude, pnts.longitude - userlongitude))}
@@ -196,7 +190,7 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                                     </div> :
                                     <div>
                                         <div className="chatroom-name-dialog">
-                                            ChatRoom : {pnts.chatroomname}
+                                            CR : {pnts.chatroomname}
                                         </div>
                                         <div className="chatroom-id-dialog">
                                             ID : #{pnts.chatroomjoinid}
@@ -218,10 +212,9 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
         )
     }
 
-    return (
-        console.log("Data : ", data),
+    return ( 
         <div className="results-container">
-            <div className="result-heading">Available Chatrooms : {data == null || data == [] || data.length == 0 ? '0 ,  No Active chatrooms currently near you' : data.length}</div>
+            <div className="result-heading">Available Chatrooms : {data === null || data == [] || data.length === 0 ? '0 ,  No Active chatrooms currently near you' : data.length}</div>
             <MapComponent points={data} />
             <div className="actionitems" >
                 {isModalOpen ?

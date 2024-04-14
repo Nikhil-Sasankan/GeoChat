@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { over } from 'stompjs';
 import SockJS from 'sockjs-client';
-import { generateRandomName } from './Utility';
+import { generateRandomName, profileiconames } from './Utility';
 import { ipaddress, createUserSession } from './APIService';
 import "./ChatRoom.css"
 import LoopIcon from '@mui/icons-material/Loop';
@@ -13,13 +13,11 @@ import EmojiPicker from 'emoji-picker-react';
 var stompClient = null;
 
 const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
-    const profileiconames = [
-        "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg",
-        "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg", "16.jpg", "17.jpg", "18.jpg"
-    ]
 
     const [privateChats, setPrivateChats] = useState(new Map());
     const [publicChats, setPublicChats] = useState([]);
+    const olderpublicchats = useRef([])
+    const useridref = useRef('')
     const [enterisDisabled, setenterIsDisabled] = useState([])
     const [tab, setTab] = useState("CHATROOM");
     const chatContentRef = useRef(null); // Ref for chat-content
@@ -51,7 +49,6 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
     };
 
     const handleProfileSelect = (profile) => {
-        console.log("profileid", profileiconames[profile])
         setUserData({ ...userData, selectedProfile: profileiconames[profile] });
     };
 
@@ -59,7 +56,6 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         let randomName = generateRandomName();
         setselectedprofile(parseInt(profileiconames.length * Math.random()))
         while (chatsessionroom.userspresent != null && chatsessionroom.userspresent.includes(randomName)) {
-            console.log("Name already exists , finding a new name")
             randomName = generateRandomName();
         }
         setenterIsDisabled(false)
@@ -77,13 +73,14 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
     const connect = () => {
         // using the POST to create a session
-        createUserSession({ usergeolocation, userData, chatsessionroom });
-
-        let Sock = new SockJS(ipaddress + '/ws');
-        stompClient = over(Sock);
-        stompClient.connect({}, onConnected, onError);
-
-        // calling post to create a user with all those details 
+        createUserSession({ usergeolocation, userData, chatsessionroom }).then((response) => {
+            console.log(response);
+            olderpublicchats.current = [...response.data.oldermessages]
+            useridref.current=[response.data.userdata.userid]
+            let Sock = new SockJS(ipaddress + '/ws');
+            stompClient = over(Sock);
+            stompClient.connect({}, onConnected, onError);
+        });
     }
 
     const onConnected = () => {
@@ -100,16 +97,17 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
             status: "JOIN",
             chatroomid: chatsessionroom.chatroomid
         };
-        stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
-        // stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+        if(olderpublicchats.current!==null && olderpublicchats.current.length!==0){
+            publicChats.push(...olderpublicchats.current);
+            setPublicChats(publicChats);  
+        }
+        stompClient.send("/app/message", {}, JSON.stringify(chatMessage)); 
     }
 
     const onMessageReceived = (payload) => {
         var payloadData = JSON.parse(payload.body);
-        console.log("Latest message received from: " + payloadData.senderName)
         switch (payloadData.status) {
             case "JOIN":
-                console.log("Just joined hi")
                 if (!privateChats.get(payloadData.senderName)) {
                     privateChats.set(payloadData.senderName, []);
                     setPrivateChats(new Map(privateChats));
@@ -120,6 +118,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                     privateChats.set(payloadData.senderName, []);
                     setPrivateChats(new Map(privateChats));
                 }
+                
                 publicChats.push(payloadData);
                 setPublicChats([...publicChats]);
                 break;
@@ -130,7 +129,6 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
     const onPrivateMessage = (payload) => {
         var payloadData = JSON.parse(payload.body);
-        console.log("Private Messgage : " + payloadData)
         if (privateChats.get(payloadData.senderName)) {
             privateChats.get(payloadData.senderName).push(payloadData);
             setPrivateChats(new Map(privateChats));
@@ -140,7 +138,6 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
             privateChats.set(payloadData.senderName, list);
             setPrivateChats(new Map(privateChats));
         }
-        console.log("Setting unread")
         setUnreadMessages((prevUnread) => ({
             ...prevUnread,
             [payloadData.senderName]: true, // Mark sender as having unread messages
@@ -153,20 +150,19 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
     const handleMessage = (event) => {
         const { value } = event.target;
-        console.log("Value of message : " + value)
         setUserData({ ...userData, "message": value });
     }
     const sendValue = () => {
         if (stompClient) {
             var chatMessage = {
                 senderName: userData.username,
+                senderid: userData.userId,
                 message: userData.message,
                 status: "MESSAGE",
                 messagetype: "text",
                 chatroomid: chatsessionroom.chatroomid,
                 selectedProfile: userData.selectedProfile
             };
-            console.log(chatMessage);
             stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
             setUserData({ ...userData, "message": "" });
         }
@@ -176,10 +172,13 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         if (stompClient) {
             var chatMessage = {
                 senderName: userData.username,
+                senderid: userData.userId,
                 receiverName: tab,
                 chatroomid: chatsessionroom.chatroomid,
                 message: userData.message,
-                status: "MESSAGE"
+                messagetype: "text",
+                status: "MESSAGE",
+                selectedProfile: userData.selectedProfile
             };
 
             if (userData.username !== tab) {
@@ -193,8 +192,6 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
     const handleUsername = (event) => {
         const { value } = event.target;
-        console.log("Users present - >", chatsessionroom.userspresent);
-        console.log(value)
         setUserData({ ...userData, "username": value });
 
         if (chatsessionroom.userspresent != null && chatsessionroom.userspresent.includes(value)) {
@@ -231,8 +228,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         }
     }
     const handleEmojiSelect = (emoji) => {
-        console.log(emoji.emoji)
-        setUserData({ ...userData, "message": userData.message+emoji.emoji });
+        setUserData({ ...userData, "message": userData.message + emoji.emoji });
     }
 
     return (
@@ -240,12 +236,12 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         <div className="container">
             {userData.connected ?
                 <div className="chat-box">
-                    <div className='chat-title'>{chatsessionroom.chatroomname}  <h7 className='chat-title id'>#{chatsessionroom.chatroomjoinid}</h7></div>
+                    <div className='chat-title'>{chatsessionroom.chatroomname}  <div className='chat-title id'>#{chatsessionroom.chatroomjoinid}</div></div>
                     <div className="member-list">
                         <ul>
                             <li onClick={() => { setTab("CHATROOM") }} className={`member chatroom ${tab === "CHATROOM" && "active"}`}>Chatroom</li>
                             {[...privateChats.keys()].map((name, index) => (
-                                <li onClick={() => { setTab(name); console.log("set as read "); markAsRead(name); }} className={`member ${tab === name && "active"} ${name === userData.username && "self"} ${tab !== name && unreadMessages[name] && "unread"}  `} key={index}  >{name === userData.username ? "You" : name} {tab !== name && unreadMessages[name] && "🔘"}</li>
+                                <li onClick={() => { setTab(name); markAsRead(name); }} className={`member ${tab === name && "active"} ${name === userData.username && "self"} ${tab !== name && unreadMessages[name] && "unread"}  `} key={index}  >{name === userData.username ? "You" : name} {tab !== name && unreadMessages[name] && "🔘"}</li>
                             ))}
                         </ul>
                     </div>
@@ -271,11 +267,11 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                         </ul>
 
                         <div className="send-message">
-                            <input type="text" className="input-message" placeholder="enter the message" value={userData.message } onKeyPress={handleKeyPublicPressSendMessage} onChange={handleMessage} />
+                            <input type="text" className="input-message" placeholder="enter the message" value={userData.message} onKeyPress={handleKeyPublicPressSendMessage} onChange={handleMessage} />
                             {selectEmoji && <div className="emoji-picker-container">
-                                <EmojiPicker previewConfig={{showPreview: false}} searchDisabled={true} width={"300px"} height={"300px"} reactionsDefaultOpen={true} onEmojiClick={handleEmojiSelect} />
+                                <EmojiPicker previewConfig={{ showPreview: false }} searchDisabled={true} width={"300px"} height={"300px"} reactionsDefaultOpen={true} onEmojiClick={handleEmojiSelect} />
                             </div>}
-                            <button className='emoji-button' onClick={()=>setselectEmoji(c=>!c)}>😀</button>
+                            <button className='emoji-button' onClick={() => setselectEmoji(c => !c)}>😀</button>
                             <button type="button" className="send-button" disabled={userData.message == null || userData.message === ""} onClick={sendValue}>Send</button>
                         </div>
                     </div>}
@@ -294,9 +290,9 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
                             <input type="text" className="input-message" placeholder="enter the message" value={userData.message} onKeyPress={handleKeyPrivatePressSendMessage} onChange={handleMessage} />
                             {selectEmoji && <div className="emoji-picker-container">
-                                <EmojiPicker previewConfig={{showPreview: false}} searchDisabled={true} width={"300px"} height={"300px"} reactionsDefaultOpen={true} onEmojiClick={handleEmojiSelect} />
+                                <EmojiPicker previewConfig={{ showPreview: false }} searchDisabled={true} width={"300px"} height={"300px"} reactionsDefaultOpen={true} onEmojiClick={handleEmojiSelect} />
                             </div>}
-                            <button className='emoji-button' onClick={()=>setselectEmoji(c=>!c)}>😀</button>
+                            <button className='emoji-button' onClick={() => setselectEmoji(c => !c)}>😀</button>
                             <button type="button" className="send-button" disabled={userData.message == null || userData.message === ""} onClick={sendPrivateValue}>Send</button>
                         </div>
                     </div>}
@@ -321,8 +317,8 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                         ))}
                     </Carousel>
                     <div>
-                        {enterisDisabled === true && errorDialogOpen === "INVALID_USERNAME" && <div className='error-message'> ❌Enter a valid username.</div>}
-                        {enterisDisabled === true && errorDialogOpen === "ALREADY_EXISTS" && <div className='error-message'> ❌Username already exists.</div>}
+                        {enterisDisabled === true && errorDialogOpen === "INVALID_USERNAME" && <div className='error-message'> ❌ Enter a valid username.</div>}
+                        {enterisDisabled === true && errorDialogOpen === "ALREADY_EXISTS" && <div className='error-message'> ❌ Username already exists.</div>}
                         {enterisDisabled === false && <div className='noerror-message'>✅ Username Available</div>}
 
                         <input
