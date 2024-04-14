@@ -44,7 +44,8 @@ body {
     padding: 1px;
     /* Add padding to prevent text from touching edges */
 }
-.chat-title.id{
+
+.chat-title.id {
     font-family: 'Poppins', sans-serif;
     font-weight: 200;
     /* Regular */
@@ -102,7 +103,8 @@ body {
 .button-register.disabled {
     background-color: transparent;
     color: rgba(255, 255, 255, 0.2);
-    cursor: not-allowed; /* Change cursor on disabled */
+    cursor: not-allowed;
+    /* Change cursor on disabled */
 }
 
 .button-random {
@@ -132,20 +134,24 @@ body {
     flex-direction: column;
     height: 100vh;
     /* Use full viewport height */
-} 
+}
+
 @media (max-width: 600px) {
-    .container  {
+    .container {
         height: 95vh;
-    } 
-    .chat-title.id{
+    }
+
+    .chat-title.id {
         font-size: 15px;
     }
 }
+
 @media (min-width: 600px) {
     .map-container {
-        height: 100vh; 
+        height: 100vh;
     }
-    .chat-title.id{
+
+    .chat-title.id {
         font-size: 20px;
     }
 }
@@ -159,13 +165,14 @@ body {
     flex-direction: column;
 }
 
-.member-list{
+.member-list {
     overflow-x: auto;
 }
+
 .member-list ul {
-    display: inline-flex;  
+    display: inline-flex;
     font-family: 'Poppins', sans-serif;
-    font-size: 10px; 
+    font-size: 10px;
     list-style-type: none;
     padding: 0px;
     margin-top: 0px;
@@ -175,9 +182,9 @@ body {
 .member-list li {
     cursor: pointer;
     padding: 7px;
-    margin:1px;
+    margin: 1px;
     border-radius: 10px;
-    background-color:  rgb(241, 126, 126);
+    background-color: rgb(241, 126, 126);
     color: #000000;
     font-weight: 500;
     width: fit-content;
@@ -185,14 +192,16 @@ body {
 
 .member-list li.active {
     color: #fff;
-    background-color: rgb(206, 41, 41); 
+    background-color: rgb(206, 41, 41);
     /* Darker shade for active tab */
 }
+
 .member-list li.self {
-    color: #fff; 
+    color: #fff;
     background-color: #0089b3;
     /* Darker shade for active tab */
 }
+
 .member-list li.unread {
     animation: glowAnimation 1s ease-in-out infinite alternate;
     /* Darker shade for active tab */
@@ -201,21 +210,27 @@ body {
 /* CSS for dim and glow effect */
 @keyframes glowAnimation {
     0% {
-      box-shadow: 0 0 0px 0px rgb(241, 126, 126);/* Initial shadow */ 
-    } 
-    50% {
-        box-shadow: 0 0 5px 4px rgb(206, 41, 41); /* Glow effect */ 
-      } 
-    100% {
-      box-shadow: 0 0 0px 0px rgb(241, 126, 126); /* Back to initial shadow */ 
+        box-shadow: 0 0 0px 0px rgb(241, 126, 126);
+        /* Initial shadow */
     }
-  }
+
+    50% {
+        box-shadow: 0 0 5px 4px rgb(206, 41, 41);
+        /* Glow effect */
+    }
+
+    100% {
+        box-shadow: 0 0 0px 0px rgb(241, 126, 126);
+        /* Back to initial shadow */
+    }
+}
 
 .member-list li.chatroom {
     color: #fff;
-    background-color: rgb(120, 201, 177) ;
+    background-color: rgb(120, 201, 177);
     /* Darker shade for active tab */
 }
+
 .chat-content {
     flex-grow: 1;
     /* Grow to fill available space */
@@ -223,11 +238,11 @@ body {
     border-radius: 5px;
     margin-top: 3px;
     margin-right: 1px;
-    padding: 5px; 
-    
-    overflow-y: visible; 
+    padding: 5px;
+
+    overflow-y: visible;
     height: 100px;
-    /* Add padding for inner content */ 
+    /* Add padding for inner content */
 }
 
 .chat-messages {
@@ -236,12 +251,12 @@ body {
     margin: 1px;
     min-height: 60vh;
     height: 93%;
-    overflow-y: auto; 
+    overflow-y: auto;
 }
 
 .message {
     padding: 1px 1px 1px 1px;
-    margin: 1px 1px 1px 1px; 
+    margin: 1px 1px 1px 1px;
     height: min-content;
     border-radius: 1px;
     background-color: rgba(219, 240, 235, 0.082);
@@ -253,14 +268,26 @@ body {
     margin-bottom: 1px;
 }
 
-.message.self { 
-    justify-content: right; 
+.emoji-picker-container {
+    position: absolute;
+    bottom: 50px; /* Adjust top position as needed */
+    right: 10px; /* Adjust left position as needed */
+    z-index: 1000; /* Set a high z-index value */ 
+  }
+.emoji-button{
+    padding: 5px;
+    margin-right: 10px;
+    background-color: #ffffff;  
+    cursor: pointer;
+}
+.message.self {
+    justify-content: right;
 }
 
 .avatar {
     display: inline-block;
     width: auto;
-    flex-shrink: 0; 
+    flex-shrink: 0;
     /* Let the width be flexible based on content */
     min-width: min-content;
     /* Minimum width to avoid shrinking too much */
@@ -268,16 +295,16 @@ body {
     background-color: rgb(212, 8, 8);
     color: #fff;
     border-radius: 8%;
-    text-align: center; 
-    align-items: center; 
+    text-align: center;
+    align-items: center;
     line-height: 20px;
     margin-right: 5px;
     margin-left: 5px;
-    padding: 2px; 
+    padding: 2px;
 }
 
-.avatar.self { 
-    background-color: #007bff;  
+.avatar.self {
+    background-color: #007bff;
 }
 
 .send-message {
@@ -329,44 +356,54 @@ body {
 }
 
 .profile-image {
-    max-width: 300px; /* Adjust the maximum width as needed */
-    max-height: 350px; /* Adjust the maximum height as needed */
-    border-radius: 70%; /* Make the image circular */
+    max-width: 300px;
+    /* Adjust the maximum width as needed */
+    max-height: 350px;
+    /* Adjust the maximum height as needed */
+    border-radius: 70%;
+    /* Make the image circular */
 }
 
-.avatar-image{
-    max-width: 30px; /* Adjust the maximum width as needed */
-    max-height: 35px; /* Adjust the maximum height as needed */
-    border-radius: 70%; /* Make the image circular */
-} 
+.avatar-image {
+    max-width: 30px;
+    /* Adjust the maximum width as needed */
+    max-height: 35px;
+    /* Adjust the maximum height as needed */
+    border-radius: 70%;
+    /* Make the image circular */
+}
 
-.message-data { 
+.message-data {
     /* Allow message data to grow */
     margin-left: 2px;
-    flex-grow: 1; /* Allow message data to grow */
+    flex-grow: 1;
+    /* Allow message data to grow */
     margin-right: 5px;
     padding: 2px 6px 2px 6px;
     border-radius: 10px;
-    background-color:rgba(230, 61, 61, 0.404);
-    text-align: left;    
-    word-wrap:break-word; /* Allow long words to break and wrap */
-    overflow-wrap: break-word; /* Ensure content wraps within container */ 
-    overflow-x: auto; 
+    background-color: rgba(230, 61, 61, 0.404);
+    text-align: left;
+    word-wrap: break-word;
+    /* Allow long words to break and wrap */
+    overflow-wrap: break-word;
+    /* Ensure content wraps within container */
+    overflow-x: auto;
 }
 
 .self .message-data {
-    background-color: rgba(22, 167, 143, 0.315); 
-    text-align: right; 
+    background-color: rgba(22, 167, 143, 0.315);
+    text-align: right;
 }
 
-.error-message{
+.error-message {
     color: rgb(247, 67, 67);
     font-family: 'Poppins', sans-serif;
     font-weight: 300;
     font-size: 13px;
     margin-left: 9px;
 }
-.noerror-message{
+
+.noerror-message {
     color: rgb(67, 247, 163);
     font-family: 'Poppins', sans-serif;
     font-weight: 300;

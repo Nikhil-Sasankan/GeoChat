@@ -7,12 +7,14 @@ import "./ChatRoom.css"
 import LoopIcon from '@mui/icons-material/Loop';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import carousel styles
 import { Carousel } from 'react-responsive-carousel';
+import EmojiPicker from 'emoji-picker-react';
+
 
 var stompClient = null;
 
 const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
     const profileiconames = [
-        "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg","10.jpg",
+        "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg",
         "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg", "16.jpg", "17.jpg", "18.jpg"
     ]
 
@@ -22,9 +24,10 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
     const [tab, setTab] = useState("CHATROOM");
     const chatContentRef = useRef(null); // Ref for chat-content
     const [errorDialogOpen, setErrorDialogOpen] = useState(false);
-    const[selectedporfile,setselectedprofile] = useState(0)
+    const [selectedporfile, setselectedprofile] = useState(0)
     // to indicate the unread messages 
     const [unreadMessages, setUnreadMessages] = useState({});
+    const [selectEmoji, setselectEmoji] = useState(false)
 
     const [userData, setUserData] = useState({
         userId: '',
@@ -38,7 +41,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         console.log(userData);
     }, [userData]);
 
- 
+
     // Function to reset unread messages for a sender
     const markAsRead = (senderName) => {
         setUnreadMessages((prevUnread) => ({
@@ -55,7 +58,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
     const generateRandomUsername = () => {
         let randomName = generateRandomName();
         setselectedprofile(parseInt(profileiconames.length * Math.random()))
-        while (chatsessionroom.userspresent!=null && chatsessionroom.userspresent.includes(randomName)) {
+        while (chatsessionroom.userspresent != null && chatsessionroom.userspresent.includes(randomName)) {
             console.log("Name already exists , finding a new name")
             randomName = generateRandomName();
         }
@@ -103,7 +106,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
 
     const onMessageReceived = (payload) => {
         var payloadData = JSON.parse(payload.body);
-        console.log("Latest message received from: "+payloadData.senderName)
+        console.log("Latest message received from: " + payloadData.senderName)
         switch (payloadData.status) {
             case "JOIN":
                 console.log("Just joined hi")
@@ -122,12 +125,12 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                 break;
             default:
                 console.log("NO MESSAGE ACTION")
-        } 
+        }
     }
 
     const onPrivateMessage = (payload) => {
         var payloadData = JSON.parse(payload.body);
-        console.log("Private Messgage : "+payloadData)
+        console.log("Private Messgage : " + payloadData)
         if (privateChats.get(payloadData.senderName)) {
             privateChats.get(payloadData.senderName).push(payloadData);
             setPrivateChats(new Map(privateChats));
@@ -194,10 +197,10 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
         console.log(value)
         setUserData({ ...userData, "username": value });
 
-        if (chatsessionroom.userspresent!=null && chatsessionroom.userspresent.includes(value)) {
+        if (chatsessionroom.userspresent != null && chatsessionroom.userspresent.includes(value)) {
             setenterIsDisabled(true)
             setErrorDialogOpen("ALREADY_EXISTS"); // Show the error dialog
-        }else if(value == null || value === ""){
+        } else if (value == null || value === "") {
             setenterIsDisabled(true)
             setErrorDialogOpen("INVALID_USERNAME"); // Show the error dialog
         } else {
@@ -227,6 +230,10 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
             sendPrivateValue();
         }
     }
+    const handleEmojiSelect = (emoji) => {
+        console.log(emoji.emoji)
+        setUserData({ ...userData, "message": userData.message+emoji.emoji });
+    }
 
     return (
 
@@ -238,7 +245,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                         <ul>
                             <li onClick={() => { setTab("CHATROOM") }} className={`member chatroom ${tab === "CHATROOM" && "active"}`}>Chatroom</li>
                             {[...privateChats.keys()].map((name, index) => (
-                                <li onClick={() => { setTab(name);console.log("set as read "); markAsRead(name);}} className={`member ${tab === name && "active"} ${name===userData.username && "self"} ${tab !== name && unreadMessages[name] && "unread"}  `} key={index}  >{name===userData.username?"You":name} {tab !== name && unreadMessages[name] && "🔘"}</li>
+                                <li onClick={() => { setTab(name); console.log("set as read "); markAsRead(name); }} className={`member ${tab === name && "active"} ${name === userData.username && "self"} ${tab !== name && unreadMessages[name] && "unread"}  `} key={index}  >{name === userData.username ? "You" : name} {tab !== name && unreadMessages[name] && "🔘"}</li>
                             ))}
                         </ul>
                     </div>
@@ -251,7 +258,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                                         <div className="avatar">
                                             {chat.senderName}
                                         </div></>}
-                                    <div className="message-data" style={{maxWidth : Math.min(window.innerWidth*0.4,chat.message.length*9)+"px"}}>{chat.message}</div>
+                                    <div className="message-data" style={{ maxWidth: Math.min(window.innerWidth * 0.4, chat.message.length * 9) + "px" }}>{chat.message}</div>
                                     {chat.senderName === userData.username && <>
                                         <div className="avatar self">
                                             {chat.senderName}
@@ -264,7 +271,11 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                         </ul>
 
                         <div className="send-message">
-                            <input type="text" className="input-message" placeholder="enter the message" value={userData.message} onKeyPress={handleKeyPublicPressSendMessage} onChange={handleMessage} />
+                            <input type="text" className="input-message" placeholder="enter the message" value={userData.message } onKeyPress={handleKeyPublicPressSendMessage} onChange={handleMessage} />
+                            {selectEmoji && <div className="emoji-picker-container">
+                                <EmojiPicker previewConfig={{showPreview: false}} searchDisabled={true} width={"300px"} height={"300px"} reactionsDefaultOpen={true} onEmojiClick={handleEmojiSelect} />
+                            </div>}
+                            <button className='emoji-button' onClick={()=>setselectEmoji(c=>!c)}>😀</button>
                             <button type="button" className="send-button" disabled={userData.message == null || userData.message === ""} onClick={sendValue}>Send</button>
                         </div>
                     </div>}
@@ -273,14 +284,19 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                             {[...privateChats.get(tab)].map((chat, index) => (
                                 <li className={`message ${chat.senderName === userData.username && "self"}`} key={index}>
                                     {chat.senderName !== userData.username && <div className="avatar">{chat.senderName}</div>}
-                                    <div className="message-data" style={{maxWidth : Math.min(window.innerWidth*0.4,chat.message.length*9)+"px"}} >{chat.message}</div>
+                                    <div className="message-data" style={{ maxWidth: Math.min(window.innerWidth * 0.4, chat.message.length * 9) + "px" }} >{chat.message}</div>
                                     {chat.senderName === userData.username && <div className="avatar self">{chat.senderName}</div>}
                                 </li>
                             ))}
                         </ul>
 
                         <div className="send-message">
+
                             <input type="text" className="input-message" placeholder="enter the message" value={userData.message} onKeyPress={handleKeyPrivatePressSendMessage} onChange={handleMessage} />
+                            {selectEmoji && <div className="emoji-picker-container">
+                                <EmojiPicker previewConfig={{showPreview: false}} searchDisabled={true} width={"300px"} height={"300px"} reactionsDefaultOpen={true} onEmojiClick={handleEmojiSelect} />
+                            </div>}
+                            <button className='emoji-button' onClick={()=>setselectEmoji(c=>!c)}>😀</button>
                             <button type="button" className="send-button" disabled={userData.message == null || userData.message === ""} onClick={sendPrivateValue}>Send</button>
                         </div>
                     </div>}
@@ -305,10 +321,10 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                         ))}
                     </Carousel>
                     <div>
-                        {enterisDisabled === true &&  errorDialogOpen==="INVALID_USERNAME" && <div className='error-message'> ❌Enter a valid username.</div> }
-                        {enterisDisabled === true &&  errorDialogOpen==="ALREADY_EXISTS"   && <div className='error-message'> ❌Username already exists.</div>}
-                        {enterisDisabled === false && <div className='noerror-message'>✅ Username Available</div> }
-                        
+                        {enterisDisabled === true && errorDialogOpen === "INVALID_USERNAME" && <div className='error-message'> ❌Enter a valid username.</div>}
+                        {enterisDisabled === true && errorDialogOpen === "ALREADY_EXISTS" && <div className='error-message'> ❌Username already exists.</div>}
+                        {enterisDisabled === false && <div className='noerror-message'>✅ Username Available</div>}
+
                         <input
                             id="user-name"
                             placeholder="Enter your name"

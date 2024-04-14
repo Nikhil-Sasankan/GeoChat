@@ -1,0 +1,9 @@
+Add more info 
+Add tooltips
+Add proper styling for phone 
+Add limitaions to the radius of location
+Add replyig to older messages 
+Add display of message before joining
+Add logout button
+Add some mechanism to persist the session for user in browser 
+Add media button

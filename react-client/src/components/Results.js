@@ -20,12 +20,35 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
     const mapRef = useRef(null);
     const [zoomLevel, setZoomLevel] = useState(15); // Initial zoom level state
     const [mapPosition, setMapPosition] = useState([userlatitude, userlongitude]); // Initial map position state
-    
+
+    // Function to calculate zoom level based on latitude and longitude difference
+    function calculateZoomLevel(latitudeDiff, longitudeDiff) {
+        // Map constants
+        const MAP_WIDTH_PX = 800; // Width of the map in pixels
+        const ZOOM_MAX = 21; // Maximum supported zoom level
+
+        // Calculate absolute differences
+        const absLatDiff = Math.abs(latitudeDiff);
+        const absLngDiff = Math.abs(longitudeDiff);
+
+        // Calculate zoom level based on absolute differences
+        const latFraction = absLatDiff / 180; // Fraction of the Earth's latitude covered by the difference
+        const lngFraction = absLngDiff / 180; // Fraction of the Earth's longitude covered by the difference
+
+        const latZoom = Math.log(MAP_WIDTH_PX / 256 / latFraction) / Math.log(2);
+        const lngZoom = Math.log(MAP_WIDTH_PX / 256 / lngFraction) / Math.log(2);
+
+        // Use the average of the latitude and longitude zoom levels
+        const zoom = Math.min(latZoom, lngZoom, ZOOM_MAX);
+
+        return Math.min(zoom-1,zoomLevel);
+    }
+
 
     const copyToClipboard = async (text) => {
         try {
-            await navigator.clipboard.writeText(text); 
-        } catch (err) { 
+            await navigator.clipboard.writeText(text);
+        } catch (err) {
         }
     };
 
@@ -158,7 +181,7 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                     console.log(pnts)
                     return (
                         <Marker key={index} position={[pnts.latitude, pnts.longitude]} icon={pnts.isprivate === "YES" ? privateRoomIcon : publicRoomIcon}  >
-
+                            {setZoomLevel(calculateZoomLevel(pnts.latitude - userlatitude, pnts.longitude - userlongitude))}
                             <Popup>{
                                 isdelete ?
                                     <div>
@@ -171,13 +194,13 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                                         <button id="delete-chatroombtn" className="button-18 del" onClick={() => { setChatroomdelete(pnts); setisdelete(false) }}>Delete Chatroom</button>
                                         <button id="delete-chatroombtn" className="button-18" onClick={() => { setisdelete(false) }}>Cancel</button>
                                     </div> :
-                                    <div> 
+                                    <div>
                                         <div className="chatroom-name-dialog">
                                             ChatRoom : {pnts.chatroomname}
                                         </div>
                                         <div className="chatroom-id-dialog">
                                             ID : #{pnts.chatroomjoinid}
-                                            <button onClick={() => {copyToClipboard(pnts.chatroomjoinid)}}>🔗</button>
+                                            <button onClick={() => { copyToClipboard(pnts.chatroomjoinid) }}>🔗</button>
                                         </div>
                                         <button id="join-chatroom" className="button-18" onClick={() => { setChatroomJoined(pnts) }}>Join Chatroom</button>
                                         <button id="delete-chatroom" className="button-18 del" onClick={() => setisdelete(true)}>Delete Chatroom</button>
@@ -198,7 +221,7 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
     return (
         console.log("Data : ", data),
         <div className="results-container">
-            <div className="result-heading">Available Chatrooms : {data==null || data==[] || data.length==0 ?'0 ,  No Active chatrooms currently near you' :data.length}</div>
+            <div className="result-heading">Available Chatrooms : {data == null || data == [] || data.length == 0 ? '0 ,  No Active chatrooms currently near you' : data.length}</div>
             <MapComponent points={data} />
             <div className="actionitems" >
                 {isModalOpen ?
