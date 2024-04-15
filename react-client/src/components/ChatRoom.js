@@ -254,7 +254,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                                         <div className="avatar">
                                             {chat.senderName}
                                         </div></>}
-                                    <div className="message-data" style={{ maxWidth: Math.min(window.innerWidth * 0.4, chat.message.length * 9) + "px" }}>{chat.message}</div>
+                                    <div className="message-data" style={{ maxWidth: Math.min(window.innerWidth * 0.4, Math.max(chat.message.length,chat.date.length) * 9) + "px" }}>{chat.message}{<div className='msg-date' >{chat.date}</div>}</div>
                                     {chat.senderName === userData.username && <>
                                         <div className="avatar self">
                                             {chat.senderName}
@@ -262,7 +262,7 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                                         <img className='avatar-image' src={process.env.PUBLIC_URL + "/profileicons/" + userData.selectedProfile} alt={"AvatarProf"} />
                                     </>
                                     }
-                                </li>
+                                </li> 
                             ))}
                         </ul>
 

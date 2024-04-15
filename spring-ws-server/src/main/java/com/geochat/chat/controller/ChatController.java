@@ -1,5 +1,6 @@
 package com.geochat.chat.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +45,11 @@ public class ChatController {
     	System.out.println("Fetching available chatrooms for the user...");
     	try {
     		result = service.fetchChatRoomsAvailable(getroomsdto);
+    		if(result==null) {result=new ArrayList<>();}
     		body = new ResponseBody("Success", HttpStatus.OK.toString(), "Successfully fetched nearby chatrooms", result);
     		resp = new ResponseEntity<ResponseBody>(body, HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println(e.getMessage());
 			body = new ResponseBody("Failed", HttpStatus.BAD_REQUEST.toString(), "Failed to fetch available chatrooms.",null);
     		resp = new ResponseEntity<ResponseBody>(body, HttpStatus.BAD_REQUEST);

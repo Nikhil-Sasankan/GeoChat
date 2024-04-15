@@ -3,7 +3,9 @@ import ChatRoom from './components/ChatRoom'
 import { useState } from "react";
 import Results from './components/Results';
 import HomePage from './components/HomePage'
+import AboutPage from './components/About';
 import { getAvailableChatRooms, createChatRoomAPIMethod, deleteChatRoomAPIMethod } from './components/APIService';
+import ContactPage from './components/Contact';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState("HOME_PAGE");
@@ -72,6 +74,15 @@ const App = () => {
       {currentPage === "HOME_PAGE" &&
         <HomePage
           handleJoinClick={handleJoinClick}
+          setCurrentPage={setCurrentPage}
+        />}
+      {currentPage === "ABOUT" &&
+        <AboutPage
+          setCurrentPage={setCurrentPage}
+        />}
+        {currentPage === "CONTACT" &&
+        <ContactPage
+          setCurrentPage={setCurrentPage}
         />}
       {currentPage === "AVAILABLE_CHATROOMS" &&
         <Results

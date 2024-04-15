@@ -16,7 +16,7 @@ public class MessageDTO {
     private String senderid; 
     private String receiverName;
     private String message;
-    private Date date;
+    private String date;
     private Status status;
     private String chatroomid;
     private String messagetype;

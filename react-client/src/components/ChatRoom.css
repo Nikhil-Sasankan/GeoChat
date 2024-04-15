@@ -280,6 +280,12 @@ body {
     background-color: #ffffff;  
     cursor: pointer;
 }
+
+.msg-date{
+    font-size: 10px;
+    font-weight: 300;
+}
+
 .message.self {
     justify-content: right;
 }

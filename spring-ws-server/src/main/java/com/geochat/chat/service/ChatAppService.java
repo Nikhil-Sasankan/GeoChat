@@ -2,6 +2,7 @@ package com.geochat.chat.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit; 
 import java.util.ArrayList;
 import java.util.Date;
@@ -137,19 +138,21 @@ public class ChatAppService {
 
 		// To store the id of the dates to be deleted
 		List<String> croomIDS = new ArrayList<>();
+		List<String> chatroomUID = new ArrayList<>();
 		for (Chatroom chatroom : cityChatRooms) {
 			LocalDate lastactive = chatroom.getLasttimeactive().toInstant().atZone(java.time.ZoneId.systemDefault())
 					.toLocalDate();
 			if (chatroom.getActiveusers() <= 0 && lastactive.isBefore(localDate1minusOneDay)) {
 				// adding to the list to delete
 				croomIDS.add(chatroom.getChatroomjoinid());
+				chatroomUID.add(chatroom.getChatroomid()+"");
 				// removing from the process list
 				cityChatRooms.remove(chatroom);
 			}
 		}
 		
 		// Deleteing all the messages for that room
-		messagerepo.deleteAllforChatroom(croomIDS);
+		messagerepo.deleteAllforChatroom(chatroomUID);
 		// deleteing all the inactive chatroom
 		chatroomrepo.deleteAllByjoinid(croomIDS);
 
@@ -182,10 +185,17 @@ public class ChatAppService {
 		List<Message> msgs = messagerepo.findAllbyChatrooomid(prefChatroomid); 
 		List<MessageDTO> oldermess = new ArrayList<>();
 		
+		// fromat
+		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("E h:mm a");
+		
+		
 		for (Message messages : msgs) {
 			MessageDTO msdto = new MessageDTO();
 			msdto.setChatroomid(prefChatroomid+"");
-			msdto.setDate(messages.getTimesent());
+			
+			LocalDateTime msgtime = messages.getTimesent().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime();
+			
+			msdto.setDate(msgtime.format(timeFormatter));
 			msdto.setMessage(messages.getMessagecontent());
 			msdto.setMessagetype(messages.getMessagetype());
 			msdto.setReceiverName(messages.getReceiverName());
@@ -232,6 +242,11 @@ public class ChatAppService {
 		savemessage.setTimesent(new Date()); 
 		savemessage.setUsername(message.getSenderName());
 		messagerepo.save(savemessage);
+		
+		
+		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("E h:mm a");
+		LocalDateTime msgtime = (new Date()).toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime();
+		message.setDate(msgtime.format(timeFormatter));
 		
 		userrepo.save(users);
 		System.out.println("User is valid");

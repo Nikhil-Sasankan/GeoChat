@@ -1,4 +1,4 @@
-.home-page {
+.about-page {
     background-image: url('https://images.squarespace-cdn.com/content/v1/6131aab0e93278616cc6f6b8/1630812785434-3TCPK3QM374NBTP3VI11/25552.jpg?format=1000w');
     background-size: cover;
     background-position: center;
@@ -10,33 +10,35 @@
     color: azure;
 }
 
-.geo-title{
+.about-title{
     font-family: 'Poppins', sans-serif;
     font-weight: 300; /* Regular */
-    font-size: 60px;
+    font-size: 40px;
     color: #fff; /* Text color */
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); /* Adjust the blur radius and color as needed */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); /* Adjust the blur radius and color as needed */
     padding: 20px; /* Add padding to prevent text from touching edges */
 }
-
-.button-join {
-    background-color: transparent;
-    color: #ffffff; /* Text color */
-    border: 2px solid #ffffff; /* White border */
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+.about-title.description{
+    justify-content: center;
+    font-size: 20px
+}
+.about-title.features{
+    list-style: none; 
+    padding: 1px;
+    margin: 1px;
+    justify-content: left;
+    align-self: flex-start;
+    margin-left: 20px;
+    font-size: 17px
 }
 
-.button-join:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
-    color: #ffffff; /* Text color on hover */
+.about-title.footer{
+    list-style: none; 
+    padding: 1px;
+    margin-top: 130px;
+    font-size: 17px
 }
 
-
-/* HomePage.css */
 
 .navbar {
     position: fixed;
