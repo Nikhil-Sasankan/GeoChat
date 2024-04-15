@@ -22,6 +22,16 @@
     padding: 20px;
     /* Add padding to prevent text from touching edges */
 }
+.contact-title.name{
+    font-size: 20px;
+    align-content: center;
+    text-shadow: none;
+    text-align: center;
+    padding: 1px;
+    background-color: rgba(34, 15, 18, 0.7);
+    font-weight: 500;
+    color: rgb(230, 115, 134);
+}
 
 .contact-links {
     list-style: none;

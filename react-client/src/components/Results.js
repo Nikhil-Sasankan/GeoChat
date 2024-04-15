@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, useMapEvents, Popup } from 'react-leaf
 import 'leaflet/dist/leaflet.css'
 import { useState, useRef } from "react";
 import L from 'leaflet';
+import { Tooltip } from "react-tooltip";
 
 const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatsessionroom, handleCreateAPI, handleFindPrivateChats, handleDeleteAPI }) => {
     const [createChatRoomObj, setcreateChatRoomObj] = useState({
@@ -215,6 +216,7 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
     return ( 
         <div className="results-container">
             <div className="result-heading"> Available Chatrooms : {data === null || data == [] || data.length === 0 ? '0 ,  No Active chatrooms currently near you' : data.length}</div>
+            {isCreatingRoom && <div className="notify">🔆 Note : Chatrooms will be automatically deleted after ' 1 ' days of inactivity.</div>}
             <MapComponent points={data} />
             <div className="actionitems" >
                 {isModalOpen ?
@@ -224,13 +226,14 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                         <button className="button-findchatrooms" onClick={() => setIsModalOpen(false)}>Cancel</button>
                     </div>
                     :
-                    <button className="button-findchatrooms" onClick={() => setIsModalOpen(true)} >
-                        Find Private Chatrooms
+                    <button className="button-findchatrooms" data-tooltip-place="right-start" data-tooltip-id="findchatroom" data-tooltip-content="Enter chatroom unique ID to find public & private chatrooms near you." onClick={() => setIsModalOpen(true)} >
+                        Find Private Chatrooms <Tooltip id="findchatroom"/>
                     </button>
                 }
                 {!isCreatingRoom ?
-                    <button className="button-create" onClick={() => SetIsCreatingRoom(true)}>
-                        Create Chatroom
+                    <button className="button-create" onClick={() => SetIsCreatingRoom(true)} data-tooltip-place="right" data-tooltip-id="createchatroom"
+                     data-tooltip-content="Click and select location on map to create public or private chatrooms.">
+                        Create Chatroom  <Tooltip id="createchatroom"/>
                     </button> :
                     <button className="button-create" onClick={() => { SetIsCreatingRoom(false); setcreateChatRoomObj(null) }}>
                         Cancel

@@ -8,6 +8,7 @@ import LoopIcon from '@mui/icons-material/Loop';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import carousel styles
 import { Carousel } from 'react-responsive-carousel';
 import EmojiPicker from 'emoji-picker-react';
+import { Tooltip } from 'react-tooltip';
 
 
 var stompClient = null;
@@ -331,8 +332,9 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                             margin="normal"
                             className='input-username'
                         />
-                        <button className="button-random" onClick={generateRandomUsername}>
-                            <LoopIcon />
+                        <button className="button-random" onClick={generateRandomUsername} data-tooltip-place="right" data-tooltip-id="randomize"
+                     data-tooltip-content="Click to select random username and profile.">
+                            <LoopIcon /><Tooltip id="randomize"/>
                         </button>
                     </div>
                     <button className={`button-register ${enterisDisabled ? 'disabled' : ''}`} disabled={enterisDisabled} onClick={registerUser}>

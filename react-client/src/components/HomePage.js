@@ -1,4 +1,6 @@
 import './HomePage.css' 
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
 
 const HomePage = ({handleJoinClick,setCurrentPage})=>{
     return(
@@ -13,7 +15,8 @@ const HomePage = ({handleJoinClick,setCurrentPage})=>{
                 </ul>
             </nav>
             <h1 className='geo-title'>GEO-CHAT</h1>
-            <button className='button-join' onClick={handleJoinClick}> Join Chat</button>
+            <button data-tooltip-place='right-end' data-tooltip-id="join" data-tooltip-content="Join available chatrooms in your location!" className='button-join' onClick={handleJoinClick}> Join Chat</button>
+            <Tooltip id="join"/>
         </div>
     )
 }
