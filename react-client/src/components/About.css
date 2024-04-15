@@ -35,7 +35,9 @@
 .about-title.footer{
     list-style: none; 
     padding: 1px;
-    margin-top: 130px;
+    align-self: center;
+    text-align: center;
+    margin : 20px;
     font-size: 17px
 }
 
