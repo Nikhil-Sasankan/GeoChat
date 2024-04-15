@@ -332,9 +332,8 @@ const ChatRoom = ({ chatsessionroom, usergeolocation }) => {
                             margin="normal"
                             className='input-username'
                         />
-                        <button className="button-random" onClick={generateRandomUsername} data-tooltip-place="right" data-tooltip-id="randomize"
-                     data-tooltip-content="Click to select random username and profile.">
-                            <LoopIcon /><Tooltip id="randomize"/>
+                        <button className="button-random" onClick={generateRandomUsername}>
+                            <LoopIcon />
                         </button>
                     </div>
                     <button className={`button-register ${enterisDisabled ? 'disabled' : ''}`} disabled={enterisDisabled} onClick={registerUser}>

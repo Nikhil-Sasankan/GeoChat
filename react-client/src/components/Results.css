@@ -81,18 +81,16 @@
     color: rgb(67, 247, 163);
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 16px;
-    background-color: rgba(113, 122, 204, 0.46);
+    font-size: 13px;
     margin-top: -1px;
 }
 
 .button-create {
     margin-top: 20px;
     margin-bottom: 20px;
-    margin-right: 20px;
     background-color: transparent;
     align-self: flex-end;
-    color: #ffffff;
+    color: #d86767;
     /* Text color */
     border: 2px solid #ffffff;
     /* White border */
