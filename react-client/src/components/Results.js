@@ -214,7 +214,7 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
 
     return ( 
         <div className="results-container">
-            <div className="result-heading">Available Chatrooms : {data === null || data == [] || data.length === 0 ? '0 ,  No Active chatrooms currently near you' : data.length}</div>
+            <div className="result-heading"> Available Chatrooms : {data === null || data == [] || data.length === 0 ? '0 ,  No Active chatrooms currently near you' : data.length}</div>
             <MapComponent points={data} />
             <div className="actionitems" >
                 {isModalOpen ?

@@ -63,6 +63,7 @@
 .button-findchatrooms {
     margin-top: 20px;
     margin-right: 20px;
+    margin-left: 20px;
     background-color: transparent;
     align-self: flex-start;
     color: #ffffff;
@@ -78,6 +79,7 @@
 
 .button-create {
     margin-top: 20px;
+    margin-bottom: 20px;
     margin-right: 20px;
     background-color: transparent;
     align-self: flex-end;
