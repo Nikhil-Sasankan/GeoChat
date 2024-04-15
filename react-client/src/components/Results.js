@@ -231,9 +231,8 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                     </button>
                 }
                 {!isCreatingRoom ?
-                    <button className="button-create" onClick={() => SetIsCreatingRoom(true)} data-tooltip-place="right" data-tooltip-id="createchatroom"
-                     data-tooltip-content="Click and select location on map to create public or private chatrooms.">
-                        Create Chatroom  <Tooltip id="createchatroom"/>
+                    <button className="button-create" onClick={() => SetIsCreatingRoom(true)}>
+                        Create Chatroom 
                     </button> :
                     <button className="button-create" onClick={() => { SetIsCreatingRoom(false); setcreateChatRoomObj(null) }}>
                         Cancel
