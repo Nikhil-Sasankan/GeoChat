@@ -227,7 +227,7 @@ const Results = ({ data, userlatitude, userlongitude, setCurrentPage, setchatses
                     </div>
                     :
                     <button className="button-findchatrooms" data-tooltip-place="right-start" data-tooltip-id="findchatroom" data-tooltip-content="Enter chatroom unique ID to find public & private chatrooms near you." onClick={() => setIsModalOpen(true)} >
-                        Find Private Chatrooms <Tooltip id="findchatroom"/>
+                        Find Chatroom <Tooltip id="findchatroom"/>
                     </button>
                 }
                 {!isCreatingRoom ?
